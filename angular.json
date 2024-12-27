@@ -32,8 +32,9 @@
               }
             ],
             "styles": [
-              "src/app/services/colors.scss",
-              "src/app/services/fonts.scss"
+              "src/styles.scss",
+              "src/app/shared/styles/colors.scss",
+              "src/app/styles/fonts.scss"
             ],
             "scripts": [],
             "server": "src/main.server.ts",
@@ -97,8 +98,9 @@
               }
             ],
             "styles": [
-              "src/app/services/colors.scss",
-              "src/app/services/fonts.scss"
+              "src/styles.scss",
+              "src/app/styles/colors.scss",
+              "src/app/styles/fonts.scss"
             ],
             "scripts": []
           }
