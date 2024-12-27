@@ -34,7 +34,7 @@
             "styles": [
               "src/styles.scss",
               "src/app/shared/styles/colors.scss",
-              "src/app/styles/fonts.scss"
+              "src/app/shared/styles/fonts.scss"
             ],
             "scripts": [],
             "server": "src/main.server.ts",
@@ -99,8 +99,8 @@
             ],
             "styles": [
               "src/styles.scss",
-              "src/app/styles/colors.scss",
-              "src/app/styles/fonts.scss"
+              "src/app/shared/styles/colors.scss",
+              "src/app/shared/styles/fonts.scss"
             ],
             "scripts": []
           }
