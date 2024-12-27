@@ -2,12 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { MovieService } from '../../core/services/movie.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Observable } from 'rxjs';
-import { Movie } from '../../core/models/movie.model'; 
+import { Movie } from '../../core/models/movie.model';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  styleUrls: ['./home.component.scss'],
+  imports: []
 })
 export class HomeComponent implements OnInit {
   moviesSlider$: Observable<Movie[]> = new Observable<Movie[]>();  
@@ -26,5 +27,6 @@ export class HomeComponent implements OnInit {
     // Ocultar el spinner cuando los datos estén listos
     this.moviesSlider$.subscribe(() => this.spinner.hide());
     this.moviesData$.subscribe(() => this.spinner.hide());
+
   }
 }

@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, throwError  } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ApiService {
-  private apiKey = process.env['OMDB_API_KEY'];
+  private apiKey = environment.apiKey;
   private apiUrl = 'https://api.themoviedb.org/3';
   private language = 'en-US';
 
