@@ -1,0 +1,18 @@
+<div class="movie-grid">
+    <!-- Itera sobre la lista de películas (basada en el observable elegido) -->
+    <div *ngFor="let item of movieList$ | async; let i = index" class="movie-card-container">
+      
+      <!-- Muestra el esqueleto si la película no está cargada -->
+      <div *ngIf="loading && !item" class="movie-card-container skeleton">
+        <div class="skeleton-box">
+          <p-skeleton [width]="'280px'" [height]="'400px'" class="skeleton-card"></p-skeleton>
+        </div>
+      </div>
+      
+      <!-- Muestra la película si está cargada -->
+      <div *ngIf="!loading && item">
+        <img [src]="item.imgSrc" alt="{{ item.title }}" class="movie-poster">
+        <p-card title>{{ item.title }}</p-card>
+      </div>
+    </div>
+  </div>

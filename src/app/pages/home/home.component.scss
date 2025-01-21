@@ -1,0 +1,13 @@
+.movie-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+    overflow: auto;
+    height: 60vh;
+
+    .movie-poster {
+      width: 100%;
+      border-radius: 10px;
+    }
+  }
+  

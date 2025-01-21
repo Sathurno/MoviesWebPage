@@ -97,7 +97,13 @@ export class ApiService {
     return this.http.get(`${this.apiUrl}/genre/${id}/${type}`, { params })
       .pipe(catchError(this.handleError));
   }
-
+  
+  getDiscoverMovies(page: number): Observable<any> {
+    const params = this.buildParams({ page: page.toString(), sort_by: 'popularity.desc' });
+    return this.http.get(`${this.apiUrl}/discover/movie`, { params })
+      .pipe(catchError(this.handleError));
+  }
+  
   getCredits(id: number, type: string): Observable<any> {
     const params = this.buildParams({});
     return this.http.get(`${this.apiUrl}/${type}/${id}/credits`, { params })
