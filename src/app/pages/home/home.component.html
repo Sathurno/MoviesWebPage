@@ -1,18 +1,39 @@
-<div class="movie-grid">
-    <!-- Itera sobre la lista de películas (basada en el observable elegido) -->
-    <div *ngFor="let item of movieList$ | async; let i = index" class="movie-card-container">
-      
-      <!-- Muestra el esqueleto si la película no está cargada -->
-      <div *ngIf="loading && !item" class="movie-card-container skeleton">
-        <div class="skeleton-box">
-          <p-skeleton [width]="'280px'" [height]="'400px'" class="skeleton-card"></p-skeleton>
+<div class="container">
+  <!-- Sección superior con portada fija -->
+  <div class="movie-banner">
+    <p-carousel 
+    [value]="(moviesSlider$ | async) || []" 
+    [responsiveOptions]="responsiveOptions" 
+    [autoplayInterval]="10000"
+    [style]="{'max-width': '100%'}"
+  >
+    <ng-template let-movie pTemplate="item">
+      <div class="movie-item">
+        <img [src]="movie.imgSrc" [alt]="movie.title" class="w-full rounded-border" />
+        <div class="movie-info">
+          <h3>{{ movie.title }}</h3>
         </div>
       </div>
-      
-      <!-- Muestra la película si está cargada -->
+    </ng-template>
+  </p-carousel>
+  
+  </div>
+
+  <!-- Sección inferior con la cuadrícula de películas -->
+  <div class="movie-grid">
+    <div *ngFor="let item of movieList$ | async; let i = index" class="movie-card-container">
+      <div *ngIf="loading && !item" class="skeleton-box">
+        <p-skeleton [width]="'280px'" [height]="'400px'" class="skeleton-card"></p-skeleton>
+      </div>
       <div *ngIf="!loading && item">
         <img [src]="item.imgSrc" alt="{{ item.title }}" class="movie-poster">
         <p-card title>{{ item.title }}</p-card>
       </div>
     </div>
   </div>
+
+  <!-- Paginación -->
+  <div class="pagination">
+    <button *ngFor="let page of totalPages" (click)="changePage(page)">{{ page }}</button>
+  </div>
+</div>

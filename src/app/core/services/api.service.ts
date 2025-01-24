@@ -97,7 +97,7 @@ export class ApiService {
     return this.http.get(`${this.apiUrl}/genre/${id}/${type}`, { params })
       .pipe(catchError(this.handleError));
   }
-  
+
   getDiscoverMovies(page: number): Observable<any> {
     const params = this.buildParams({ page: page.toString(), sort_by: 'popularity.desc' });
     return this.http.get(`${this.apiUrl}/discover/movie`, { params })
@@ -142,6 +142,12 @@ export class ApiService {
     }
     return httpParams;
   }
+  getMovieImages(movieId: number): Observable<any> {
+    const params = this.buildParams({ include_image_language: 'en,null' });
+    return this.http.get(`${this.apiUrl}/movie/${movieId}/images`, { params })
+      .pipe(catchError(this.handleError));
+  }
+  
 
   private handleError(error: any): Observable<never> {
     console.error('An error occurred', error);

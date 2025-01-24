@@ -9,33 +9,54 @@ import { ButtonModule } from 'primeng/button';
 import { ScrollerModule } from 'primeng/scroller';
 import { CommonModule } from '@angular/common';
 import { SkeletonModule } from 'primeng/skeleton';
+import { CarouselModule } from 'primeng/carousel';
+
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
-  imports: [ProgressSpinnerModule, CardModule, ButtonModule, ScrollerModule, CommonModule, SkeletonModule]
+  imports: [ProgressSpinnerModule, CardModule, ButtonModule, ScrollerModule, CommonModule, SkeletonModule, CarouselModule],
+  host: { ngSkipHydration: 'true' },
 })
 export class HomeComponent implements OnInit {
   moviesSlider$: Observable<Movie[]> = new Observable<Movie[]>();  
   moviesData$: Observable<Movie[]> = new Observable<Movie[]>(); 
   movieList$: Observable<Movie[]> = new Observable<Movie[]>();
-  loading: boolean = true;
+  loading: boolean = true; 
+  totalPages: number[] = [];
+
+  responsiveOptions: any[] = [
+    {
+      breakpoint: '1024px',
+      numVisible: 1,
+      numScroll: 1
+    },
+    {
+      breakpoint: '768px',
+      numVisible: 1,
+      numScroll: 1
+    },
+    {
+      breakpoint: '560px',
+      numVisible: 1,
+      numScroll: 1
+    }
+  ];
 
   constructor(private movieService: MovieService) {}
 
   ngOnInit() {
-    // Llamar a la API para obtener películas populares y en cartelera
     this.moviesSlider$ = this.movieService.fetchTrendingMovies();
-    this.moviesData$ = this.movieService.getAllMoviesPaginated(7);
-    
-    // Ocultar el spinner cuando los datos estén listos
-    this.moviesSlider$.subscribe(() => (this.loading = false));
-    this.moviesData$.subscribe(() => (this.loading = false));
+    this.moviesData$ = this.movieService.getAllMoviesPaginated(10);
+    this.moviesData$.subscribe(movies => {
+      this.totalPages = Array.from({ length: Math.ceil(movies.length / 40) }, (_, i) => i + 1);
+      this.movieList$ = this.movieService.getMoviesByPage(1);
+      this.loading = false;
+    });
+  }
 
-    //Elegir peliculas a mostrar
-    this.movieList$ = this.moviesData$;
-
-
+  changePage(page: number) {
+    this.movieList$ = this.movieService.getMoviesByPage(page);
   }
 }

@@ -96,6 +96,23 @@ export class MovieService {
       catchError(error => throwError(() => new Error('Error fetching movies')))
     );
   }
+
+getMoviesByPage(page: number): Observable<Movie[]> {
+  return this.apiService.getDiscoverMovies(page).pipe(
+    map((response: any) =>
+      response.results.map((item: any) => ({
+        link: `/movie/${item.id}`,
+        imgSrc: item.poster_path ? `https://image.tmdb.org/t/p/w500${item.poster_path}` : null,
+        title: item.title,
+        description: item.overview,
+        rating: item.vote_average * 10,
+        vote: item.vote_average,
+      }))
+    ),
+    catchError(error => throwError(() => new Error('Error fetching movies')))
+  );
+}
+
  
     // Obtener el tráiler de YouTube para una película
     getYouTubeTrailer(movieId: number): Observable<Movie> {
@@ -117,4 +134,15 @@ export class MovieService {
         }))
       );
     }
+    getMovieWallpapers(movieId: number): Observable<string[]> {
+      return this.apiService.getMovieImages(movieId).pipe(
+        map((response: any) =>
+          response.backdrops.map((image: any) => 
+            `https://image.tmdb.org/t/p/original${image.file_path}`
+          )
+        ),
+        catchError(error => throwError(() => new Error('Error fetching movie wallpapers')))
+      );
+    }
+    
 }
