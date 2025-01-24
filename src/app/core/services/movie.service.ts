@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { ApiService } from '../../core/services/api.service';
-import { forkJoin, Observable, throwError } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { forkJoin, Observable, of, throwError } from 'rxjs';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import { Movie } from '../models/movie.model';
+import { createBackdrop, Backdrop } from '../../core/models/backdrop.model';
 
 @Injectable({
   providedIn: 'root'
@@ -62,18 +63,22 @@ export class MovieService {
     );
   }
 
-  //obtener pelis mas votadas
-  getTopRatedMovies(): Observable<Movie[]> {
-    return this.apiService.getCategory('top_rated', 1, 'movie').pipe(
-      map((response: any) => response.results.map((item: any) => ({
-        link: `/movie/${item.id}`,
-        imgSrc: item.poster_path ? `https://image.tmdb.org/t/p/w370_and_h556_bestv2${item.poster_path}` : null,
-        title: item.title,
-        rating: item.vote_average * 10,
-        vote: item.vote_average,
-      })))
+  //obtener backdrops
+  getMoviesBackdrops(movies: Movie[]): Observable<Backdrop[]> {
+    return forkJoin(
+      movies.map((movie) => 
+        this.apiService.getMoviesBackdrop(Number(movie.link.split('/movie/')[1]))
+      )
+    ).pipe(
+      map((backdropsArray) => 
+        backdropsArray.flat().map((backdropData: any) => createBackdrop(backdropData))
+      ),
+      catchError((error) => {
+        console.error('Error fetching backdrops:', error);
+        return of([]);
+      })
     );
-  }
+  }   
 
   //Obtener una lista de peliculas extensa según el número de ventanas requeridas (API devuelve packs de 20)
   getAllMoviesPaginated(maxPages: number): Observable<Movie[]> {
@@ -135,9 +140,9 @@ getMoviesByPage(page: number): Observable<Movie[]> {
       );
     }
     getMovieWallpapers(movieId: number): Observable<string[]> {
-      return this.apiService.getMovieImages(movieId).pipe(
-        map((response: any) =>
-          response.backdrops.map((image: any) => 
+      return this.apiService.getMoviesBackdrop(movieId).pipe(
+        map((backdrops: any[]) =>
+          backdrops.map((image: any) => 
             `https://image.tmdb.org/t/p/original${image.file_path}`
           )
         ),

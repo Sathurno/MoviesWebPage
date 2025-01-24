@@ -2,21 +2,17 @@
   <!-- Sección superior con portada fija -->
   <div class="movie-banner">
     <p-carousel 
-    [value]="(moviesSlider$ | async) || []" 
-    [responsiveOptions]="responsiveOptions" 
-    [autoplayInterval]="10000"
-    [style]="{'max-width': '100%'}"
-  >
-    <ng-template let-movie pTemplate="item">
-      <div class="movie-item">
-        <img [src]="movie.imgSrc" [alt]="movie.title" class="w-full rounded-border" />
-        <div class="movie-info">
-          <h3>{{ movie.title }}</h3>
+      [value]="(backdrops$ | async) || []" 
+      [responsiveOptions]="responsiveOptions" 
+      [autoplayInterval]="10000"
+      [numVisible]="1"
+    >
+      <ng-template let-backdrop pTemplate="item">
+        <div class="movie-item">
+          <img [src]="backdrop.getBackdropUrl()" [alt]="'Backdrop'" class="w-full rounded-border" />
         </div>
-      </div>
-    </ng-template>
-  </p-carousel>
-  
+      </ng-template>
+    </p-carousel>
   </div>
 
   <!-- Sección inferior con la cuadrícula de películas -->

@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, throwError  } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
+import { Backdrop } from '../models/backdrop.model';
 
 @Injectable({
   providedIn: 'root',
@@ -132,7 +133,17 @@ export class ApiService {
     return this.http.get(`${this.apiUrl}/search/multi`, { params })
       .pipe(catchError(this.handleError));
   }
-
+  getMoviesBackdrop(movieId: number, language: string = 'en'): Observable<Backdrop[]> {
+    // Construcción de los parámetros para la solicitud
+    const params = this.buildParams({ movieId: movieId.toString(), language, include_image_language: 'en,null' });
+    
+    return this.http.get(`${this.apiUrl}/movie/${movieId}/images`, { params })
+      .pipe(
+        map((response: any) => response.backdrops),  // Extraemos solo los backdrops de la respuesta
+        catchError(this.handleError)  // Manejo de errores
+      );
+  }
+  
   private buildParams(params: any): HttpParams {
     let httpParams = new HttpParams().set('api_key', this.apiKey || '').set('language', this.language);
     for (const key in params) {
@@ -141,13 +152,7 @@ export class ApiService {
       }
     }
     return httpParams;
-  }
-  getMovieImages(movieId: number): Observable<any> {
-    const params = this.buildParams({ include_image_language: 'en,null' });
-    return this.http.get(`${this.apiUrl}/movie/${movieId}/images`, { params })
-      .pipe(catchError(this.handleError));
-  }
-  
+  }  
 
   private handleError(error: any): Observable<never> {
     console.error('An error occurred', error);

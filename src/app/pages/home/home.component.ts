@@ -10,6 +10,7 @@ import { ScrollerModule } from 'primeng/scroller';
 import { CommonModule } from '@angular/common';
 import { SkeletonModule } from 'primeng/skeleton';
 import { CarouselModule } from 'primeng/carousel';
+import { Backdrop } from '../../core/models/backdrop.model';
 
 
 @Component({
@@ -20,7 +21,7 @@ import { CarouselModule } from 'primeng/carousel';
   host: { ngSkipHydration: 'true' },
 })
 export class HomeComponent implements OnInit {
-  moviesSlider$: Observable<Movie[]> = new Observable<Movie[]>();  
+  backdrops$: Observable<Backdrop[]> = new Observable<Backdrop[]>(); 
   moviesData$: Observable<Movie[]> = new Observable<Movie[]>(); 
   movieList$: Observable<Movie[]> = new Observable<Movie[]>();
   loading: boolean = true; 
@@ -46,8 +47,10 @@ export class HomeComponent implements OnInit {
 
   constructor(private movieService: MovieService) {}
 
-  ngOnInit() {
-    this.moviesSlider$ = this.movieService.fetchTrendingMovies();
+  ngOnInit() {;
+    this.movieService.getPopularMovies().subscribe(movies => {
+      this.backdrops$ = this.movieService.getMoviesBackdrops(movies);
+    });
     this.moviesData$ = this.movieService.getAllMoviesPaginated(10);
     this.moviesData$.subscribe(movies => {
       this.totalPages = Array.from({ length: Math.ceil(movies.length / 40) }, (_, i) => i + 1);
