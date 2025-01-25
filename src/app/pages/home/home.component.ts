@@ -19,6 +19,10 @@ import { Backdrop } from '../../core/models/backdrop.model';
   host: { ngSkipHydration: 'true' },
 })
 export class HomeComponent implements OnInit {
+  movieCategories = [
+    { name: 'Popular', movies$: new Observable<Movie[]>() },
+    { name: 'Recommends', movies$: new Observable<Movie[]>() },
+  ];
   movies$: Observable<Movie[]> = new Observable<Movie[]>();
   selectedMovieBackdrops: Backdrop[] = [];
   selectedThumbnails: Backdrop[] = [];
@@ -48,13 +52,7 @@ export class HomeComponent implements OnInit {
         this.loadAllMoviesBackdrops(movies); // Cargamos los fondos de pantalla
       }
     });
-
-    this.moviesData$ = this.movieService.getAllMoviesPaginated(10);
-    this.moviesData$.subscribe(movies => {
-      this.totalPages = Array.from({ length: Math.ceil(movies.length / 40) }, (_, i) => i + 1);
-      this.movieList$ = this.movieService.getMoviesByPage(1);
-      this.loading = false;
-    });
+    this.movieList$ = this.movieService.getPopularMovies();
   }
 
   loadAllMoviesBackdrops(movies: Movie[]) {
@@ -81,18 +79,5 @@ export class HomeComponent implements OnInit {
 
     // Actualizar la portada de la película actual
     this.selectedMovieBackdrops = [this.allBackdrops[this.selectedMovieIndex]]; // Asumimos que allBackdrops está alineado con las películas
-  }
-
-  // Mostrar el backdrop seleccionado al hacer clic en una miniatura
-  showBackdrop(backdrop: Backdrop) {
-    this.selectedMovieBackdrops = [backdrop];
-    const movie = this.movies.find(m => m.thumbnails?.includes(backdrop));
-    if (movie) {
-      this.selectedThumbnails = movie.thumbnails || [];
-    }
-  }
-
-  changePage(page: number) {
-    this.movieList$ = this.movieService.getMoviesByPage(page);
   }
 }
