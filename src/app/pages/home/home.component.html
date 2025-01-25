@@ -1,17 +1,25 @@
 <div class="container">
-  <!-- Sección superior con portada fija -->
   <div class="movie-banner">
     <p-carousel 
-      [value]="(backdrops$ | async) || []" 
+      [value]="allBackdrops" 
       [responsiveOptions]="responsiveOptions" 
       [autoplayInterval]="10000"
       [numVisible]="1"
-    >
+      (onPageChange)="changeMovie($event)">
+      
       <ng-template let-backdrop pTemplate="item">
         <div class="movie-item">
-          <img [src]="backdrop.getBackdropUrl()" [alt]="'Backdrop'" class="w-full rounded-border" />
+          <img [src]="backdrop.getBackdropUrl()" alt="Backdrop" class="w-full rounded-border" />
+          
+          <!-- Miniaturas superpuestas -->
+          <div class="backdrop-thumbnails">
+            <div *ngFor="let thumb of selectedThumbnails" (click)="showBackdrop(thumb)">
+              <img [src]="thumb.getBackdropUrl()" alt="Thumbnail" class="thumbnail" />
+            </div>
+          </div>
         </div>
       </ng-template>
+      
     </p-carousel>
   </div>
 

@@ -11,15 +11,42 @@
   justify-content: center;
   align-items: start;
   overflow: hidden;
-}
+  position: relative;
 
-.movie-item {
-  object-fit: cover;
-}
-.movie-item img {
-  width: 100%;
-  max-height: 600px;
-  object-fit: contain;
+  .backdrop-thumbnails {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    gap: 10px;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+
+    .thumbnail {
+      width: 100px;
+      height: 60px;
+      border-radius: 5px;
+      cursor: pointer;
+      opacity: 0.7;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+
+      &:hover {
+        transform: scale(1.1);
+        opacity: 1;
+      }
+    }
+  }
+
+  .movie-item {
+    position: relative;
+    img {
+      width: 100%;
+      max-height: 600px;
+      object-fit: contain;
+    }
+  }
 }
 
 .movie-grid {
@@ -35,45 +62,44 @@
   height: 100%;
   background-size: cover;
   background-position: center;
-}
 
-.banner-overlay {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(to left, transparent, black);
-}
+  .banner-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to left, transparent, black);
+  }
 
-.banner-text {
-  position: absolute;
-  left: 5%;
-  top: 50%;
-  transform: translateY(-50%);
-  color: white;
+  .banner-text {
+    position: absolute;
+    left: 5%;
+    top: 50%;
+    transform: translateY(-50%);
+    color: white;
+  }
 }
 
 .movie-card-container {
   cursor: pointer;
   transition: transform 0.2s ease-in-out;
-}
 
-.movie-card-container:hover {
-  transform: scale(1.05);
-}
+  &:hover {
+    transform: scale(1.05);
+  }
 
-.movie-poster {
-  width: 100%;
-  border-radius: 10px;
+  .movie-poster {
+    width: 100%;
+    border-radius: 10px;
+  }
 }
 
 .pagination {
   text-align: center;
   margin-top: 20px;
   padding-bottom: 20px;
-}
 
-.pagination button {
-  margin: 0 5px;
-  padding: 10px;
-  cursor: pointer;
+  button {
+    margin: 0 5px;
+    padding: 10px;
+    cursor: pointer;
+  }
 }
