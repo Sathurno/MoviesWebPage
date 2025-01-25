@@ -1,29 +1,28 @@
 <div class="container">
   <div class="movie-banner">
     <p-carousel 
-      [value]="allBackdrops" 
-      [responsiveOptions]="responsiveOptions" 
-      [autoplayInterval]="10000"
-      [numVisible]="1"
-      (onPageChange)="changeMovie($event)">
-      
-      <ng-template let-backdrop pTemplate="item">
-        <div class="movie-item">
-          <img [src]="backdrop.getBackdropUrl()" alt="Backdrop" class="w-full rounded-border" />
-          
-          <!-- Miniaturas superpuestas -->
-          <div class="backdrop-thumbnails">
-            <div *ngFor="let thumb of selectedThumbnails" (click)="showBackdrop(thumb)">
-              <img [src]="thumb.getBackdropUrl()" alt="Thumbnail" class="thumbnail" />
-            </div>
+    [value]="allBackdrops" 
+    [responsiveOptions]="responsiveOptions" 
+    [autoplayInterval]="10000"
+    [numVisible]="1"
+    (onPage)="onPageChange($event)">
+    
+    <ng-template let-backdrop pTemplate="item">
+      <div class="movie-item">
+        <img [src]="backdrop.getBackdropUrl()" alt="Backdrop" class="w-full rounded-border" />
+        
+        <!-- Miniaturas superpuestas -->
+        <div class="backdrop-thumbnails">
+          <div *ngFor="let thumb of selectedThumbnails" (click)="showBackdrop(thumb)">
+            <img [src]="thumb.getBackdropUrl()" alt="Thumbnail" class="thumbnail" />
           </div>
         </div>
-      </ng-template>
-      
-    </p-carousel>
+      </div>
+    </ng-template>
+  </p-carousel>
+  
   </div>
 
-  <!-- Sección inferior con la cuadrícula de películas -->
   <div class="movie-grid">
     <div *ngFor="let item of movieList$ | async; let i = index" class="movie-card-container">
       <div *ngIf="loading && !item" class="skeleton-box">
@@ -36,7 +35,6 @@
     </div>
   </div>
 
-  <!-- Paginación -->
   <div class="pagination">
     <button *ngFor="let page of totalPages" (click)="changePage(page)">{{ page }}</button>
   </div>

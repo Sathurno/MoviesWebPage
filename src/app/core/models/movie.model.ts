@@ -1,3 +1,5 @@
+import { Backdrop } from "./backdrop.model";
+
 export interface Movie {
     link: string;
     imgSrc: string | null;
@@ -5,5 +7,6 @@ export interface Movie {
     rating: number;
     vote: number;
     videoId?: string;  // Opcional, ya que no todas las películas pueden tener un video de YouTube
+    thumbnails?: Backdrop[]; // Add this line
   }
   

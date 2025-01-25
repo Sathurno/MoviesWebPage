@@ -150,4 +150,39 @@ getMoviesByPage(page: number): Observable<Movie[]> {
       );
     }
     
+      // Obtener películas por género
+  getByGenre(id: number, type: string, page: number): Observable<Movie[]> {
+    return this.apiService.getByGenre(id, type, page).pipe(
+      map((response: any) => response.results.map((item: any) => ({
+        link: `/movie/${item.id}`,
+        imgSrc: item.poster_path ? `https://image.tmdb.org/t/p/w370_and_h556_bestv2${item.poster_path}` : null,
+        title: item.title,
+        rating: item.vote_average * 10,
+        vote: item.vote_average,
+      })))
+    );
+  }
+
+  // Obtener categorías de películas
+  getCategory(category: string, page: number, mediaType: string): Observable<Movie[]> {
+    return this.apiService.getCategory(category, page, mediaType).pipe(
+      map((response: any) => response.results.map((item: any) => ({
+        link: `/movie/${item.id}`,
+        imgSrc: item.poster_path ? `https://image.tmdb.org/t/p/w370_and_h556_bestv2${item.poster_path}` : null,
+        title: item.title,
+        rating: item.vote_average * 10,
+        vote: item.vote_average,
+      })))
+    );
+  }
+  
+  getGenreList(media: string): Observable<any> {
+    return this.apiService.getGenreList(media).pipe(
+      map((response: any) => response.genres.map((genre: any) => ({
+        id: genre.id,
+        name: genre.name
+      }))),
+      catchError(error => throwError(() => new Error('Error fetching genres')))
+    );
+  }
 }
