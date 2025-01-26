@@ -12,9 +12,9 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./movies-banner.component.scss'],
   imports: [CarouselModule, CommonModule],
 })
-export class MovieBannerComponent implements OnInit {
+export class MoviesBannerComponent implements OnInit {
   @Input() movies$: Observable<Movie[]> = new Observable<Movie[]>();
-  @Output() pageChanged: EventEmitter<any> = new EventEmitter<any>();
+  @Output() pageChanged = new EventEmitter<number>(); 
 
   allBackdrops: Backdrop[] = [];
   selectedMovieBackdrops: Backdrop[] = [];
@@ -47,17 +47,24 @@ export class MovieBannerComponent implements OnInit {
       movies.forEach((movie, index) => {
         movie.thumbnails = allBackdrops[index].slice(1, 5); 
       });
-
+  
+      // Verificar si las miniaturas se cargan correctamente
+      console.log('Thumbnails:', movies[0]?.thumbnails);
+  
       this.selectedThumbnails = movies[0]?.thumbnails || [];
       this.loading = false;
     });
   }
+  
 
   onPageChange(event: any) {
     this.selectedMovieIndex = event.page;
+  
+    // Asegúrate de que la película seleccionada tenga miniaturas
     const selectedMovie = this.movies[this.selectedMovieIndex];
     this.selectedThumbnails = selectedMovie?.thumbnails || [];
-    this.selectedMovieBackdrops = [this.allBackdrops[this.selectedMovieIndex]]; // Actualiza el backdrop
-    this.pageChanged.emit(event); // Emite el cambio de página al componente padre
+  
+    // Actualizar la portada de la película
+    this.selectedMovieBackdrops = [this.allBackdrops[this.selectedMovieIndex]]; // Asegúrate de que allBackdrops está alineado con las películas
   }
 }
