@@ -1,0 +1,12 @@
+<div class="movie-category">
+    <div class="category-header">
+      <h2>{{ title }}</h2>
+    </div>
+    <div class="movie-row">
+      <div *ngFor="let movie of movies" class="movie-card">
+        <img [src]="movie.imgSrc" alt="{{ movie.title }}" class="movie-poster" />
+        <div class="movie-title">{{ movie.title }}</div>
+      </div>
+    </div>
+  </div>
+  

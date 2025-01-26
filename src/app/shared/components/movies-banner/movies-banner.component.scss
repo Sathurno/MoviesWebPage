@@ -1,0 +1,42 @@
+.movie-banner {
+    margin-bottom: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    position: relative;
+    overflow: hidden;
+  
+    .backdrop-thumbnails {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      gap: 10px;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 10px;
+      border-radius: 10px;
+  
+      .thumbnail {
+        width: 100px;
+        height: 60px;
+        border-radius: 5px;
+        cursor: pointer;
+        opacity: 0.7;
+        transition: transform 0.3s ease, opacity 0.3s ease;
+  
+        &:hover {
+          transform: scale(1.1);
+          opacity: 1;
+        }
+      }
+    }
+  
+    .movie-item {
+      img {
+        width: 100%;
+        max-height: 600px;
+        object-fit: contain;
+      }
+    }
+  }
+  

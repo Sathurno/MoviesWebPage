@@ -1,0 +1,22 @@
+<div class="movie-banner">
+    <p-carousel 
+      [value]="allBackdrops" 
+      [responsiveOptions]="responsiveOptions" 
+      [autoplayInterval]="10000"
+      [numVisible]="1"
+      (onPage)="onPageChange($event)">
+      
+      <ng-template let-backdrop pTemplate="item">
+        <div class="movie-item">
+          <img [src]="backdrop.getBackdropUrl()" alt="Backdrop" class="w-full rounded-border" />
+          
+          <div class="backdrop-thumbnails">
+            <div *ngFor="let thumb of selectedThumbnails">
+              <img [src]="thumb.getBackdropUrl()" alt="Thumbnail" class="thumbnail" />
+            </div>
+          </div>
+        </div>
+      </ng-template>
+    </p-carousel>
+  </div>
+  

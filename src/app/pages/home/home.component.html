@@ -34,3 +34,10 @@
       </div>
     </div>
   </div>
+  <div class="container">
+    <app-movie-category
+      *ngFor="let category of movieCategories"
+      [title]="category.name"
+      [movies]="(category.movies$ | async) || []">
+    </app-movie-category>
+  </div>

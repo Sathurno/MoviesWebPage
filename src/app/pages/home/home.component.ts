@@ -1,21 +1,27 @@
 import { Component, OnInit } from '@angular/core';
-import { MovieService } from '../../core/services/movie.service';
+import { CommonModule } from '@angular/common';
+
 import { forkJoin, Observable } from 'rxjs';
+
+import { MovieService } from '../../core/services/movie.service';
 import { Movie } from '../../core/models/movie.model';
+import { Backdrop } from '../../core/models/backdrop.model';
+
+import { MovieCategoryComponent } from "../../shared/components/movies-category/movies-category.component";
+
+// PrimeNG Modules
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { ScrollerModule } from 'primeng/scroller';
-import { CommonModule } from '@angular/common';
 import { SkeletonModule } from 'primeng/skeleton';
 import { CarouselModule } from 'primeng/carousel';
-import { Backdrop } from '../../core/models/backdrop.model';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
-  imports: [ProgressSpinnerModule, CardModule, ButtonModule, ScrollerModule, CommonModule, SkeletonModule, CarouselModule],
+  imports: [ProgressSpinnerModule, CardModule, ButtonModule, ScrollerModule, CommonModule, SkeletonModule, CarouselModule, MovieCategoryComponent],
   host: { ngSkipHydration: 'true' },
 })
 export class HomeComponent implements OnInit {
@@ -28,7 +34,6 @@ export class HomeComponent implements OnInit {
   selectedThumbnails: Backdrop[] = [];
   selectedMovieIndex: number = 0;
   allBackdrops: Backdrop[] = [];
-  moviesData$: Observable<Movie[]> = new Observable<Movie[]>();
   movieList$: Observable<Movie[]> = new Observable<Movie[]>();
   loading: boolean = true;
   totalPages: number[] = [];
@@ -53,6 +58,9 @@ export class HomeComponent implements OnInit {
       }
     });
     this.movieList$ = this.movieService.getPopularMovies();
+    this.movieCategories = [
+      { name: 'Popular', movies$: this.movieService.getPopularMovies() },
+    ];
   }
 
   loadAllMoviesBackdrops(movies: Movie[]) {
