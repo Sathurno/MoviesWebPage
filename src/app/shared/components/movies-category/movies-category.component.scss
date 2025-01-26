@@ -5,7 +5,7 @@
   
     .category-header {
       display: flex;
-      justify-content: flex-end;
+      justify-content: flex-start;
       padding: 10px 0;
       font-size: 1.2rem;
       font-weight: bold;
@@ -19,7 +19,7 @@
   
       .movie-card {
         flex-shrink: 0;
-        width: 150px;
+        width: 250px;
         text-align: center;
         transition: transform 0.2s ease-in-out;
   

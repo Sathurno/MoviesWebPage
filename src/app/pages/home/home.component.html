@@ -1,43 +1,40 @@
 <div class="container">
   <div class="movie-banner">
     <p-carousel 
-    [value]="allBackdrops" 
-    [responsiveOptions]="responsiveOptions" 
-    [autoplayInterval]="10000"
-    [numVisible]="1"
-    (onPage)="onPageChange($event)">
+      [value]="popularMovies" 
+      [responsiveOptions]="[
+      { breakpoint: '1024px', numVisible: 1, numScroll: 1 },
+      { breakpoint: '768px', numVisible: 1, numScroll: 1 },
+      { breakpoint: '560px', numVisible: 1, numScroll: 1 }
+      ]"
+      [autoplayInterval]="10000"
+      [numVisible]="1"
+      (onPage)="onPageChange($event)">
     
-    <ng-template let-backdrop pTemplate="item">
-      <div class="movie-item">
-        <img [src]="backdrop.getBackdropUrl()" alt="Backdrop" class="w-full rounded-border" />
-        
-        <!-- Miniaturas superpuestas -->
-        <div class="backdrop-thumbnails">
-          <div *ngFor="let thumb of selectedThumbnails">
-            <img [src]="thumb.getBackdropUrl()" alt="Thumbnail" class="thumbnail" />
+      <ng-template let-movie pTemplate="item">
+        <div class="movie-item">
+          <!-- Imagen principal del carousel -->
+          <img [src]="movie.principalImage?.getBackdropUrl()" alt="Backdrop" class="w-full rounded-border" />
+          
+          <!-- Miniaturas superpuestas -->
+          <div class="backdrop-thumbnails">
+            <div *ngFor="let thumb of movie.thumbnails">
+              <img [src]="thumb.getBackdropUrl()" alt="Thumbnail" class="thumbnail" />
+            </div>
           </div>
         </div>
-      </div>
-    </ng-template>
-  </p-carousel>
-  
+      </ng-template>
+    </p-carousel>
   </div>
 
+  <!-- Grid de peliculas por categoria -->
   <div class="movie-grid">
-    <div *ngFor="let item of movieList$ | async; let i = index" class="movie-card-container">
-      <div *ngIf="loading && !item" class="skeleton-box">
-        <p-skeleton [width]="'280px'" [height]="'400px'" class="skeleton-card"></p-skeleton>
-      </div>
-      <div *ngIf="!loading && item">
-        <img [src]="item.imgSrc" alt="{{ item.title }}" class="movie-poster">
-        <p-card title>{{ item.title }}</p-card>
-      </div>
+    <div class="container">
+      <app-movie-category
+        *ngFor="let category of movieCategories"
+        [title]="category.name"
+        [movies]="(category.movies$ | async) || []">
+      </app-movie-category>
     </div>
   </div>
-  <div class="container">
-    <app-movie-category
-      *ngFor="let category of movieCategories"
-      [title]="category.name"
-      [movies]="(category.movies$ | async) || []">
-    </app-movie-category>
-  </div>
+</div>

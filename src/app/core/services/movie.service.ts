@@ -11,6 +11,17 @@ import { createBackdrop, Backdrop } from '../../core/models/backdrop.model';
 export class MovieService {
   constructor(private apiService: ApiService) {}
 
+   //Aigna a cada pelicula de la lista una imagen principal y sus miniaturas 
+   initializeMoviesImages(movies: Movie[]) {
+     forkJoin(movies.map(movie => this.getMoviesBackdrops([movie])))
+       .subscribe(movieBackdrops => {
+         movies.forEach((movie, index) => {
+           movie.principalImage = movieBackdrops[index]?.[0] || null; 
+           movie.thumbnails = movieBackdrops[index]?.slice(1, 5) || [];
+         });
+       });
+   }
+
   // Obtener las películas más populares
   fetchTrendingMovies(): Observable<Movie[]> {
     return this.apiService.getTrending('movie', 1).pipe(
