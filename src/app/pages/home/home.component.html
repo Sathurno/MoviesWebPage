@@ -13,15 +13,24 @@
     
       <ng-template let-movie pTemplate="item">
         <div class="movie-item">
-          <!-- Imagen principal del carousel -->
-          <img [src]="movie.principalImage?.getBackdropUrl()" alt="Backdrop" class="w-full rounded-border" />
-          
+          <!-- Contenedor de texto y miniaturas a la izquierda -->
+          <div class="movie-info">
+            <!-- Mostrar el logo si existe -->
+            <img *ngIf="movie.logosUrls?.length > 0; else showTitle" [src]="movie.logosUrls[0]" alt="Movie Logo" class="movie-logo" />
+            <ng-template #showTitle>
+              <!-- Si no hay logo, mostrar el título -->
+              <h2 class="movie-title">{{ movie.title }}</h2>
+            </ng-template>
+            <p class="movie-description">{{ movie.description }}</p>
+          </div>
           <!-- Miniaturas superpuestas -->
           <div class="backdrop-thumbnails">
             <div *ngFor="let thumb of movie.thumbnails">
               <img [src]="thumb.getBackdropUrl()" alt="Thumbnail" class="thumbnail" />
             </div>
           </div>
+          <!-- Imagen principal del carousel -->
+          <img [src]="movie.principalImage?.getBackdropUrl()" alt="Backdrop" class="big-image" />
         </div>
       </ng-template>
     </p-carousel>

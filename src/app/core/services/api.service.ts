@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable, throwError  } from 'rxjs';
+import { forkJoin, Observable, throwError  } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { Backdrop } from '../models/backdrop.model';
@@ -15,7 +15,29 @@ export class ApiService {
 
   constructor(private http: HttpClient) {}
 
-
+  // Función para obtener el logo de una película
+  getMovieLogos(movieId: string): Observable<string[]> {
+    return forkJoin([
+      // Logo en español
+      this.http.get(`${this.apiUrl}/movie/${movieId}/images?api_key=${this.apiKey}&language=es`)
+        .pipe(map((data: any) => data.logos && data.logos.length > 0 ? `https://image.tmdb.org/t/p/w500${data.logos[0].file_path}` : null)),
+  
+      // Logo en inglés
+      this.http.get(`${this.apiUrl}/movie/${movieId}/images?api_key=${this.apiKey}&language=en`)
+        .pipe(map((data: any) => data.logos && data.logos.length > 0 ? `https://image.tmdb.org/t/p/w500${data.logos[0].file_path}` : null)),
+  
+      // Logo en idioma original
+      this.http.get(`${this.apiUrl}/movie/${movieId}/images?api_key=${this.apiKey}&language=`)
+        .pipe(map((data: any) => data.logos && data.logos.length > 0 ? `https://image.tmdb.org/t/p/w500${data.logos[0].file_path}` : null)),
+    ]).pipe(
+      map((logos: (string | null)[]) => {
+        // Filtramos los logos nulos y retornamos solo los logos disponibles
+        return logos.filter(logo => logo !== null) as string[];
+      }),
+      catchError(this.handleError) // Manejo de errores
+    );
+  }
+  
   getNowPlaying(mediaType: string, page: number): Observable<any> {
     const params = this.buildParams({ page: page.toString() });
     return this.http.get(`${this.apiUrl}/${mediaType}/now_playing`, { params })

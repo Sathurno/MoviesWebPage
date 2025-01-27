@@ -1,6 +1,7 @@
 import { Backdrop } from "./backdrop.model";
 
 export interface Movie {
+    id: string;
     principalImage?: Backdrop;
     link: string;
     imgSrc: string | null;
@@ -9,5 +10,7 @@ export interface Movie {
     vote: number;
     videoId?: string;  
     thumbnails?: Backdrop[]; 
+    description?: string;
+    logosUrls?: string[] | null;
   }
   

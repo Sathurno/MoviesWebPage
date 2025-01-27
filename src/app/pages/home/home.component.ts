@@ -39,11 +39,12 @@ export class HomeComponent implements OnInit {
     this.movieService.getPopularMovies().subscribe(movies => {
         this.popularMovies = movies; 
         this.movieService.initializeMoviesImages(movies); 
+        this.movieService.initializeMoviesLogos(movies);
     });
     this.movieCategories = [
       { name: 'Popular', movies$: of(this.popularMovies) }, ];
   }
-  
+
   //Cambia la posicion del carousel
   onPageChange(event: any) {
     this.carouselPosition = event.page;
