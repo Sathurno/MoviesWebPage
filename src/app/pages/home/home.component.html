@@ -7,8 +7,10 @@
       { breakpoint: '768px', numVisible: 1, numScroll: 1 },
       { breakpoint: '560px', numVisible: 1, numScroll: 1 }
       ]"
-      [autoplayInterval]="10000"
+      [autoplayInterval]="7000"
+      [showNavigators]="false"
       [numVisible]="1"
+      [showIndicators]="showNavigators"
       (onPage)="onPageChange($event)">
     
       <ng-template let-movie pTemplate="item">

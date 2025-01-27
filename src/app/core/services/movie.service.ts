@@ -24,22 +24,42 @@ export class MovieService {
 
    //Aigna a cada pelicula de la lista una imagen principal y sus miniaturas 
    initializeMoviesImages(movies: Movie[]) {
-    forkJoin(movies.map(movie => this.getMoviesBackdrops([movie])))
-      .subscribe(movieBackdrops => {
+    forkJoin(movies.map(movie => this.getMoviesScreenCaptures([movie])))  // Cambiar a getMoviesScreenCaptures
+      .subscribe(movieScreenCaptures => {
         movies.forEach((movie, index) => {
-          // Filtrar las imágenes por resolución mínima 1920x1080
-          const validBackdrops = movieBackdrops[index]
-            .filter(backdrop => backdrop.width >= 1920 && backdrop.height >= 1080);
-  
+          // Filtrar imágenes por aspect_ratio adecuado para calidad (ej. 1.77 para 16:9)
+          const validScreenCaptures = movieScreenCaptures[index].filter(screenCapture => 
+            screenCapture.width >= 1920 && screenCapture.height >= 1080 && screenCapture.aspect_ratio >= 1.77
+          );
+          
           // Obtener 4 imágenes aleatorias sin repetir
-          const uniqueBackdrops = this.getRandomImages(validBackdrops, 5);
-  
+          const uniqueScreenCaptures = this.getRandomImages(validScreenCaptures, 5);
+      
           // Asignar la principal y los thumbnails
-          movie.principalImage = uniqueBackdrops[0] || null;
-          movie.thumbnails = uniqueBackdrops.slice(1) || [];
+          movie.principalImage = uniqueScreenCaptures[0] || null;
+          movie.thumbnails = uniqueScreenCaptures.slice(1) || [];
         });
       });
   }
+  
+  getMoviesScreenCaptures(movies: Movie[]): Observable<Backdrop[]> {
+    return forkJoin(
+      movies.map((movie) => 
+        this.apiService.getMoviesBackdrop(Number(movie.link.split('/movie/')[1]))  // Cambiar a getMoviesScreenCaptures
+      )
+    ).pipe(
+      map((screenCapturesArray) => 
+        screenCapturesArray.flat().filter((screenCaptureData: any) => 
+          !this.containsLogo(screenCaptureData) && !this.isDuplicateBackdrop(screenCaptureData) // Compara el enlace del screenCapture
+        ).map((screenCaptureData: any) => createBackdrop(screenCaptureData))  // Asegúrate de que la función de creación siga siendo válida
+      ),
+      catchError((error) => {
+        console.error('Error fetching screen captures:', error);
+        return of([]);
+      })
+    );
+  }
+  
   
   // Función para obtener N imágenes aleatorias sin repetir
   getRandomImages(images: any[], count: number): any[] {
@@ -60,36 +80,6 @@ export class MovieService {
       });
     });
   }
-  private async translateToSpanish(originalLanguage: string, text: string): Promise<string> {
-    if (!text || originalLanguage === 'es') {
-      return text || 'Descripción no disponible.';
-    }
-  
-    const apiKey = 'TU_API_KEY_DE_GOOGLE_TRANSLATE';
-    const url = `https://translation.googleapis.com/language/translate/v2?key=${apiKey}`;
-  
-    const body = {
-      q: text,
-      source: originalLanguage,
-      target: 'es',
-      format: 'text',
-    };
-  
-    try {
-      const response = await fetch(url, {
-        method: 'POST',
-        body: JSON.stringify(body),
-        headers: { 'Content-Type': 'application/json' }
-      });
-      
-      const result = await response.json();
-      return result.data.translations[0].translatedText || 'Descripción no disponible.';
-    } catch (error) {
-      console.error('Error al traducir:', error);
-      return 'Descripción no disponible.';
-    }
-  }
-  
   // Obtener las películas más populares
   fetchTrendingMovies(): Observable<Movie[]> {
     return this.apiService.getTrending('movie', 1).pipe(
@@ -118,7 +108,7 @@ export class MovieService {
       map((response: any) => response.results.map(this.mapMovieData))
     );
   }
-
+  private processedBackdropLinks: Set<string> = new Set();
   //obtener backdrops
   getMoviesBackdrops(movies: Movie[]): Observable<Backdrop[]> {
     return forkJoin(
@@ -127,8 +117,9 @@ export class MovieService {
       )
     ).pipe(
       map((backdropsArray) => 
-        backdropsArray.flat().filter((backdropData: any) => !this.containsLogo(backdropData))
-          .map((backdropData: any) => createBackdrop(backdropData))
+        backdropsArray.flat().filter((backdropData: any) => 
+          !this.containsLogo(backdropData) && !this.isDuplicateBackdrop(backdropData) // Compara el enlace del backdrop
+        ).map((backdropData: any) => createBackdrop(backdropData))
       ),
       catchError((error) => {
         console.error('Error fetching backdrops:', error);
@@ -136,11 +127,21 @@ export class MovieService {
       })
     );
   }
-  
+
   containsLogo(backdropData: any): boolean {
     // Lógica para determinar si la imagen tiene un logo o marca
-    // Esto podría ser tan simple como comprobar si la URL o las propiedades del objeto `backdropData` incluyen un logo.
     return backdropData.file_path.includes('logo') || backdropData.file_path.includes('watermark');
+  }
+
+  // Verificar si el enlace del backdrop ya ha sido procesado
+  private isDuplicateBackdrop(backdropData: any): boolean {
+    const backdropLink = backdropData.file_path; // Usamos el link del backdrop para comparar
+    if (this.processedBackdropLinks.has(backdropLink)) {
+      return true; // Si el enlace ya está en el conjunto, es un duplicado
+    } else {
+      this.processedBackdropLinks.add(backdropLink); // Si no está en el conjunto, lo agregamos
+      return false; // No es un duplicado
+    }
   }
   
 
@@ -190,7 +191,18 @@ export class MovieService {
       map((response: any) => response.results.map(this.mapMovieData))
     );
   }
-
+  getMediaByGenreRange(media: string, genreId: number, pageRange: number[]): Observable<Movie[]> {
+    const pageRequests = pageRange.map(page =>
+      this.apiService.getMediaByGenre(media, genreId, page).pipe(
+        map((response: any) => response.results.map(this.mapMovieData))
+      )
+    );
+  
+    return forkJoin(pageRequests).pipe(
+      map((results: Movie[][]) => results.flat()) // Aplana el array de arrays a un solo array de películas
+    );
+  }
+  
   // Obtener categorías de películas
   getCategory(category: string, page: number, mediaType: string): Observable<Movie[]> {
     return this.apiService.getCategory(category, page, mediaType).pipe(
@@ -198,8 +210,8 @@ export class MovieService {
     );
   }
   
-  getGenreList(media: string): Observable<any> {
-    return this.apiService.getGenreList(media).pipe(
+  getGenreList(language: string): Observable<any> {
+    return this.apiService.getGenreList(language).pipe(
       map((response: any) => response.genres.map((genre: any) => ({
         id: genre.id,
         name: genre.name

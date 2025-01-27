@@ -113,9 +113,14 @@ export class ApiService {
       .pipe(catchError(this.handleError));
   }
 
-  getGenreList(media: string): Observable<any> {
+  getGenreMovieList(media: string): Observable<any> {
     const params = this.buildParams({});
     return this.http.get(`${this.apiUrl}/genre/${media}/list`, { params })
+      .pipe(catchError(this.handleError));
+  }
+  getGenreList(language: string): Observable<any> {
+    const params = this.buildParams({});
+    return this.http.get(`${this.apiUrl}/genre/movie/list`, { params })
       .pipe(catchError(this.handleError));
   }
 

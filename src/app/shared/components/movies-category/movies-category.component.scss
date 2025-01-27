@@ -1,37 +1,58 @@
 .movie-category {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 30px;
+  position: relative; /* Para asegurarnos de que el sticky funcione correctamente */
+}
+
+.category-header {
+  display: flex;
+  justify-content: flex-start;
+  font-size: 1.5rem;
+  font-weight: bold;
+  
+  /* Posición fija justo encima del carousel */
+  position: absolute;
+  top: 0;
+  left: 5%; /* Ajusta esto según sea necesario para alinear el título */
+  z-index: 10; /* Asegura que el título se quede encima de otros elementos */
+  width: 90%; /* Se ajusta al 90% del ancho del contenedor */
+  padding: 10px 0; /* Se mantiene el padding vertical */
+}
+
+.custom-carousel {
+  
+  .p-carousel-content {
     display: flex;
-    flex-direction: column;
-    margin-bottom: 30px;
-  
-    .category-header {
-      display: flex;
-      justify-content: flex-start;
-      padding: 10px 0;
-      font-size: 1.2rem;
-      font-weight: bold;
-    }
-  
-    .movie-row {
-      display: flex;
-      overflow-x: auto;
-      gap: 20px;
-      padding: 10px 0;
-  
-      .movie-card {
-        flex-shrink: 0;
-        width: 250px;
-        text-align: center;
-        transition: transform 0.2s ease-in-out;
-  
-        &:hover {
-          transform: scale(1.05);
-        }
-  
-        .movie-poster {
-          width: 100%;
-          border-radius: 10px;
-        }
-      }
-    }
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;  /* Espaciado entre películas */
   }
-  
+
+  .p-carousel-item {
+    flex: 1 1 auto;
+    transition: transform 0.3s ease-in-out;
+    cursor: pointer;
+  }
+}
+
+.movie-card {
+  margin-top: 90px;
+  width: 100%;
+  padding: 25px;
+  max-width: 400px;
+  text-align: center;
+  position: relative;  /* Para que el efecto hover de la imagen no afecte el layout */
+}
+
+.movie-poster {
+  cursor: pointer;
+  width: 100%;
+  min-width: 220px;
+  border-radius: 10px;
+  transition: transform 0.3s ease;  /* Transición para el agrandado de la imagen */
+
+  &:hover {
+    transform: scale(1.1);  /* Agrandar imagen */
+  }
+}

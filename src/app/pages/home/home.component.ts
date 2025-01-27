@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { forkJoin, Observable, of } from 'rxjs';
+import { forkJoin, map, Observable, of } from 'rxjs';
 
 // Services
 import { MovieService } from '../../core/services/movie.service';
@@ -28,24 +28,54 @@ import { CarouselModule } from 'primeng/carousel';
 })
 
 export class HomeComponent implements OnInit {
+  showNavigators: boolean = true;
   popularMovies: Movie[] = [];
   carouselPosition: number = 0;
   movieCategories: { name: string; movies$: Observable<Movie[]> }[] = [];
   selectedImage: Backdrop | null = null;
+  genreList: Observable<any>;
+  allMovies: Set<number> = new Set(); // Para asegurar que no haya películas repetidas
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    if (window.innerWidth < 800) {
+      this.showNavigators = false; // Ocultar los navegadores cuando la ventana es menor a 1000px
+    } else {
+      this.showNavigators = true; // Mostrar los navegadores si la ventana es mayor o igual a 1000px
+    }
+  }
   
-  constructor(private movieService: MovieService) {}
+  constructor(private movieService: MovieService) {
+    this.genreList = this.movieService.getGenreList('movie');
+  }
 
   //Obtiene las peliculas populares, guarda las imagenes para el carousel y define las categorias del grid
   ngOnInit() {
     this.movieService.getPopularMovies().subscribe(movies => {
-        this.movieService.initializeMoviesImages(movies); 
-        this.movieService.initializeMoviesLogos(movies);
-        this.popularMovies = movies.filter(movie => 
-          movie.description && movie.description.trim() !== '' && movie.thumbnails && movie.thumbnails?.length > 0
-        );       
+      this.movieService.initializeMoviesImages(movies); 
+      this.movieService.initializeMoviesLogos(movies);
+      this.popularMovies = movies.filter(movie => 
+        movie.description && movie.description.trim() !== '' && movie.thumbnails && movie.thumbnails?.length > 0
+      );       
+    });
+    this.movieService.getGenreList('movie').subscribe(genres => {
+      const genreObservables = genres.slice(0, 11).map((genre: { id: number; name: string }) => {
+        return {
+          name: genre.name,
+          movies$: this.movieService.getMediaByGenreRange('movie', genre.id, [1, 2]).pipe(
+            map((movies: Movie[]) => {
+              const uniqueMovies = movies.filter(movie => !this.allMovies.has(Number(movie.id)));
+              uniqueMovies.forEach(movie => this.allMovies.add(Number(movie.id))); // Añadir las películas al set
+              return uniqueMovies;
+            })
+          )
+        };
+      });
+      this.movieCategories = genreObservables;
     });
     this.movieCategories = [
-      { name: 'Popular', movies$: of(this.popularMovies) }, ];
+      ...this.movieCategories, 
+    ];
   }
 
   //Cambia la posicion del carousel
