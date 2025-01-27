@@ -44,6 +44,35 @@ export class MovieService {
       });
     });
   }
+  private async translateToSpanish(originalLanguage: string, text: string): Promise<string> {
+    if (!text || originalLanguage === 'es') {
+      return text || 'Descripción no disponible.';
+    }
+  
+    const apiKey = 'TU_API_KEY_DE_GOOGLE_TRANSLATE';
+    const url = `https://translation.googleapis.com/language/translate/v2?key=${apiKey}`;
+  
+    const body = {
+      q: text,
+      source: originalLanguage,
+      target: 'es',
+      format: 'text',
+    };
+  
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: { 'Content-Type': 'application/json' }
+      });
+      
+      const result = await response.json();
+      return result.data.translations[0].translatedText || 'Descripción no disponible.';
+    } catch (error) {
+      console.error('Error al traducir:', error);
+      return 'Descripción no disponible.';
+    }
+  }
   
   // Obtener las películas más populares
   fetchTrendingMovies(): Observable<Movie[]> {
@@ -61,10 +90,11 @@ export class MovieService {
   
   //Obtener pelis populares
   getPopularMovies(): Observable<Movie[]> {
-    return this.apiService.getCategory('popular', 1, 'movie').pipe(
+    return this.apiService.getCategory('popular', 1, 'movie', { language: 'es' }).pipe(
       map((response: any) => response.results.map(this.mapMovieData))
     );
   }
+  
 
   //obtener pelis recomendadas
   getRecommendedMovies(movieId: number): Observable<Movie[]> {
@@ -81,14 +111,22 @@ export class MovieService {
       )
     ).pipe(
       map((backdropsArray) => 
-        backdropsArray.flat().map((backdropData: any) => createBackdrop(backdropData))
+        backdropsArray.flat().filter((backdropData: any) => !this.containsLogo(backdropData))
+          .map((backdropData: any) => createBackdrop(backdropData))
       ),
       catchError((error) => {
         console.error('Error fetching backdrops:', error);
         return of([]);
       })
     );
-  }   
+  }
+  
+  containsLogo(backdropData: any): boolean {
+    // Lógica para determinar si la imagen tiene un logo o marca
+    // Esto podría ser tan simple como comprobar si la URL o las propiedades del objeto `backdropData` incluyen un logo.
+    return backdropData.file_path.includes('logo') || backdropData.file_path.includes('watermark');
+  }
+  
 
   //Obtener una lista de peliculas extensa según el número de ventanas requeridas (API devuelve packs de 20)
   getAllMoviesPaginated(maxPages: number): Observable<Movie[]> {

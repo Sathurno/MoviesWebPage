@@ -43,12 +43,16 @@ export class ApiService {
     return this.http.get(`${this.apiUrl}/${mediaType}/now_playing`, { params })
       .pipe(catchError(this.handleError));
   }
-
-  getCategory(category: string, page: number, mediaType: string): Observable<any> {
-    const params = this.buildParams({ page: page.toString() });
+  getCategory(category: string, page: number, mediaType: string, additionalParams: { [key: string]: any } = {}): Observable<any> {
+    const params = this.buildParams({ 
+      page: page.toString(), 
+      ...additionalParams  // Añadir parámetros adicionales como el idioma
+    });
+  
     return this.http.get(`${this.apiUrl}/${mediaType}/${category}`, { params })
       .pipe(catchError(this.handleError));
   }
+  
 
   getMovie(id: number): Observable<any> {
     return this.http.get(`${this.apiUrl}/movie/${id}`, { params: this.buildParams({}) })

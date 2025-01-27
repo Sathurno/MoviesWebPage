@@ -31,15 +31,18 @@ export class HomeComponent implements OnInit {
   popularMovies: Movie[] = [];
   carouselPosition: number = 0;
   movieCategories: { name: string; movies$: Observable<Movie[]> }[] = [];
-
+  selectedImage: Backdrop | null = null;
+  
   constructor(private movieService: MovieService) {}
 
   //Obtiene las peliculas populares, guarda las imagenes para el carousel y define las categorias del grid
   ngOnInit() {
     this.movieService.getPopularMovies().subscribe(movies => {
-        this.popularMovies = movies; 
         this.movieService.initializeMoviesImages(movies); 
         this.movieService.initializeMoviesLogos(movies);
+        this.popularMovies = movies.filter(movie => 
+          movie.description && movie.description.trim() !== '' && movie.thumbnails && movie.thumbnails?.length > 0
+        );       
     });
     this.movieCategories = [
       { name: 'Popular', movies$: of(this.popularMovies) }, ];
@@ -48,5 +51,17 @@ export class HomeComponent implements OnInit {
   //Cambia la posicion del carousel
   onPageChange(event: any) {
     this.carouselPosition = event.page;
+    this.selectedImage = null;
+  }
+
+  // Cambiar la imagen principal al hacer clic en un thumbnail
+  onThumbnailClick(thumb: Backdrop) {
+    this.selectedImage = thumb; 
+
+  }
+
+   // Obtener la imagen principal dependiendo si se seleccionó un thumbnail
+  getImageForCarousel(movie: Movie): string {
+    return this.selectedImage?.getBackdropUrl() || movie.principalImage?.getBackdropUrl() || '';
   }
 }

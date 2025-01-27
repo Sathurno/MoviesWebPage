@@ -26,11 +26,11 @@
           <!-- Miniaturas superpuestas -->
           <div class="backdrop-thumbnails">
             <div *ngFor="let thumb of movie.thumbnails">
-              <img [src]="thumb.getBackdropUrl()" alt="Thumbnail" class="thumbnail" />
+              <img [src]="thumb.getBackdropUrl()" alt="Thumbnail" class="thumbnail" (click)="onThumbnailClick(thumb)"/>
             </div>
           </div>
           <!-- Imagen principal del carousel -->
-          <img [src]="movie.principalImage?.getBackdropUrl()" alt="Backdrop" class="big-image" />
+          <img [src]="getImageForCarousel(movie)"  alt="Backdrop" class="big-image" />
         </div>
       </ng-template>
     </p-carousel>
