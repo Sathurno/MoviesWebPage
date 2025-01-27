@@ -24,14 +24,30 @@ export class MovieService {
 
    //Aigna a cada pelicula de la lista una imagen principal y sus miniaturas 
    initializeMoviesImages(movies: Movie[]) {
-     forkJoin(movies.map(movie => this.getMoviesBackdrops([movie])))
-       .subscribe(movieBackdrops => {
-         movies.forEach((movie, index) => {
-           movie.principalImage = movieBackdrops[index]?.[0] || null; 
-           movie.thumbnails = movieBackdrops[index]?.slice(1, 5) || [];
-         });
-       });
-   }
+    forkJoin(movies.map(movie => this.getMoviesBackdrops([movie])))
+      .subscribe(movieBackdrops => {
+        movies.forEach((movie, index) => {
+          // Filtrar las imágenes por resolución mínima 1920x1080
+          const validBackdrops = movieBackdrops[index]
+            .filter(backdrop => backdrop.width >= 1920 && backdrop.height >= 1080);
+  
+          // Obtener 4 imágenes aleatorias sin repetir
+          const uniqueBackdrops = this.getRandomImages(validBackdrops, 5);
+  
+          // Asignar la principal y los thumbnails
+          movie.principalImage = uniqueBackdrops[0] || null;
+          movie.thumbnails = uniqueBackdrops.slice(1) || [];
+        });
+      });
+  }
+  
+  // Función para obtener N imágenes aleatorias sin repetir
+  getRandomImages(images: any[], count: number): any[] {
+    const shuffled = [...images].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, count);
+  }
+  
+  
    initializeMoviesLogos(movies: Movie[]) {
     // Usamos forkJoin para hacer todas las solicitudes de los logos en paralelo
     forkJoin(movies.map(movie => 
