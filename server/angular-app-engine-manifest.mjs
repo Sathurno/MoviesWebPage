@@ -1,6 +1,6 @@
 
 export default {
-  basePath: '/',
+  basePath: '/MoviesWebPage/',
   entryPoints: {
     '': () => import('./main.server.mjs')
   },

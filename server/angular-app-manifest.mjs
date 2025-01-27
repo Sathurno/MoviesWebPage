@@ -2,18 +2,18 @@
 export default {
   bootstrap: () => import('./main.server.mjs').then(m => m.default),
   inlineCriticalCss: true,
-  baseHref: '/',
+  baseHref: '/MoviesWebPage/',
   locale: undefined,
   routes: [
   {
     "renderMode": 2,
-    "route": "/"
+    "route": "/MoviesWebPage"
   }
 ],
   assets: {
-    'index.csr.html': {size: 11116, hash: '913e4619ea9f962ecc66c7f8edee8068f8898f8bc0d1424b237b4199a70c7fd8', text: () => import('./assets-chunks/index_csr_html.mjs').then(m => m.default)},
-    'index.server.html': {size: 10481, hash: '1f12c1ce56ff580dc9ec0337ff6da1d2ea292e0f034d4991ccdf32e5f6463f53', text: () => import('./assets-chunks/index_server_html.mjs').then(m => m.default)},
-    'index.html': {size: 36614, hash: 'eb9fae92b87c9f3b37160896fd53a80e9db098162b4207af2c979eddcfc4a150', text: () => import('./assets-chunks/index_html.mjs').then(m => m.default)},
+    'index.csr.html': {size: 11130, hash: '84029e972ae8d2759ef33dbcd1c8b533387f99ad5d9289146a96a75d8382ea6f', text: () => import('./assets-chunks/index_csr_html.mjs').then(m => m.default)},
+    'index.server.html': {size: 10495, hash: 'a8fa1db668ebe9dea9595ad7d5354c247d85f3963880a7eeada843d322d289c4', text: () => import('./assets-chunks/index_server_html.mjs').then(m => m.default)},
+    'index.html': {size: 1791380, hash: '0d492a58ea26b0f8b1d73848336bffaf4e7d5aad2452dfaa0243771459a8bb29', text: () => import('./assets-chunks/index_html.mjs').then(m => m.default)},
     'styles-7LQY33HC.css': {size: 1023, hash: '041C93KcD5A', text: () => import('./assets-chunks/styles-7LQY33HC_css.mjs').then(m => m.default)}
   },
 };
