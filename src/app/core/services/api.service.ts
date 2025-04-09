@@ -170,8 +170,11 @@ export class ApiService {
     
     return this.http.get(`${this.apiUrl}/movie/${movieId}/images`, { params })
       .pipe(
-        map((response: any) => response.backdrops),  // Extraemos solo los backdrops de la respuesta
-        catchError(this.handleError)  // Manejo de errores
+        map((response: any) => {
+          // Ordenamos los backdrops por vote_average de mayor a menor
+          return response.backdrops.sort((a: any, b: any) => b.vote_average - a.vote_average);
+        }),  
+        catchError(this.handleError)
       );
   }
   

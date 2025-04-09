@@ -1,17 +1,36 @@
+// Variables
+$font-size-base: 1rem;
+$line-height-base: 1.3;
+$font-size-description: clamp(0.7rem, 1.15vw, 1.4rem);
+$backdrop-thumbnail-size: clamp(60px, 5vw, 130px);
+$container-padding: 20px;
+$container-max-width: 2440px;
+$movie-banner-margin: 80px;
+$description-background: linear-gradient(to right, #f3f3f3, #cccccc);
+
+// Mixins
+@mixin text-shadow($x, $y, $blur, $color) {
+  text-shadow: $x $y $blur $color;
+}
+
+@mixin transition($properties, $duration, $timing-function) {
+  transition: $properties $duration $timing-function;
+}
+
+// Estilos generales
 .container {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  padding: 0 20px;
-  max-width: 2440px;
+  padding: 0 $container-padding;
+  max-width: $container-max-width;
   margin: 0 auto;
   text-align: center;
 }
 
 .movie-banner {
   position: relative;
-  margin-left: 80px;
-  margin-right: 80px;
+  margin: 0 $movie-banner-margin;
 }
 
 .movie-item {
@@ -28,17 +47,17 @@
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  left: 0px;
+  left: 0;
   max-width: 50%;
   height: 100%;
   padding-left: 2vw;
   padding-right: clamp(50px, 7vw, 200px);
   z-index: 1;
-  
-  font-size: 1rem;
-  line-height: 1.3;
+
+  font-size: $font-size-base;
+  line-height: $line-height-base;
   text-align: left;
-  text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.7);
+  @include text-shadow(2px, 2px, 10px, rgba(0, 0, 0, 0.7));
 }
 
 .movie-logo {
@@ -48,14 +67,13 @@
 }
 
 .movie-description {
-  font-size: clamp(0.7rem, 1.15vw, 1.4rem);  /* Ajusta el tamaño de la fuente */
-  text-align: justify;  /* Justifica el texto */
-  background-image: linear-gradient(to right, #f3f3f3, #cccccc);
+  font-size: $font-size-description;
+  text-align: justify;
+  background-image: $description-background;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
 }
-
 
 .big-image {
   width: 90%;
@@ -64,7 +82,6 @@
   object-fit: fill;
   z-index: 0;
   mask-image: linear-gradient(to right, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0) 60%, rgba(0, 0, 0, 0) 100%);
-
 }
 
 .backdrop-thumbnails {
@@ -81,11 +98,12 @@
 }
 
 .backdrop-thumbnails .thumbnail {
-  height: clamp(60px, 5vw, 130px);
+  height: $backdrop-thumbnail-size;
   border-radius: 0.5vw;
   cursor: pointer;
   opacity: 0.9;
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  @include transition(transform, 0.3s, ease);
+  @include transition(opacity, 0.3s, ease);
 }
 
 .backdrop-thumbnails .thumbnail:hover {
@@ -93,22 +111,19 @@
   opacity: 1;
 }
 
-/* Ajustes responsivos */
-
+// Media queries
 @media (max-width: 1100px) {
   .movie-description {
     display: none;
   }
 }
-@media (max-width: 1000px) {
 
-  .backdrop-thumbnails {
-    display: none;
-  }
+@media (max-width: 1000px) {
   .backdrop-thumbnails {
     display: none;
   }
 }
+
 @media (max-width: 1500px) {
   .movie-description {
     display: none;
