@@ -20,15 +20,15 @@ export class ApiService {
     return forkJoin([
       // Logo en español
       this.http.get(`${this.apiUrl}/movie/${movieId}/images?api_key=${this.apiKey}&language=es`)
-        .pipe(map((data: any) => data.logos && data.logos.length > 0 ? `https://image.tmdb.org/t/p/w500${data.logos[0].file_path}` : null)),
+        .pipe(map((data: any) => data.logos && data.logos.length > 0 ? `${environment.imageBaseUrl}/${environment.imageSize.w500}${data.logos[0].file_path}` : null)),
   
       // Logo en inglés
       this.http.get(`${this.apiUrl}/movie/${movieId}/images?api_key=${this.apiKey}&language=en`)
-        .pipe(map((data: any) => data.logos && data.logos.length > 0 ? `https://image.tmdb.org/t/p/w500${data.logos[0].file_path}` : null)),
+        .pipe(map((data: any) => data.logos && data.logos.length > 0 ? `${environment.imageBaseUrl}/${environment.imageSize.w500}${data.logos[0].file_path}` : null)),
   
       // Logo en idioma original
       this.http.get(`${this.apiUrl}/movie/${movieId}/images?api_key=${this.apiKey}&language=`)
-        .pipe(map((data: any) => data.logos && data.logos.length > 0 ? `https://image.tmdb.org/t/p/w500${data.logos[0].file_path}` : null)),
+        .pipe(map((data: any) => data.logos && data.logos.length > 0 ? `${environment.imageBaseUrl}/${environment.imageSize.w500}${data.logos[0].file_path}` : null)),
     ]).pipe(
       map((logos: (string | null)[]) => {
         // Filtramos los logos nulos y retornamos solo los logos disponibles

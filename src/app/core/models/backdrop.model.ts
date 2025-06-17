@@ -1,3 +1,5 @@
+import { environment } from '../../../environments/environment';
+
 export interface Backdrop {
     aspect_ratio: number;
     height: number;
@@ -19,7 +21,7 @@ export interface Backdrop {
       vote_count: backdropData.vote_count,
       width: backdropData.width,
       getBackdropUrl: function () {
-        return `https://image.tmdb.org/t/p/original${this.file_path}`;
+        return `${environment.imageBaseUrl}/${environment.imageSize.original}${this.file_path}`;
       },
     };
   }

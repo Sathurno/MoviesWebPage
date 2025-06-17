@@ -4,6 +4,7 @@ import { forkJoin, Observable, of, throwError } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { Movie } from '../models/movie.model';
 import { createBackdrop, Backdrop } from '../../core/models/backdrop.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,7 @@ export class MovieService {
     return {
       id: item.id,
       link: `/movie/${item.id}`,
-      imgSrc: item.poster_path ? `https://image.tmdb.org/t/p/w370_and_h556_bestv2${item.poster_path}` : null,
+      imgSrc: item.poster_path ? `${environment.imageBaseUrl}/${environment.imageSize.w370}${item.poster_path}` : null,
       title: item.title,
       rating: item.vote_average * 10,
       vote: item.vote_average,
@@ -178,7 +179,7 @@ export class MovieService {
      return this.apiService.getMoviesBackdrop(movieId).pipe(
        map((backdrops: any[]) =>
          backdrops.map((image: any) => 
-           `https://image.tmdb.org/t/p/original${image.file_path}`
+           `${environment.imageBaseUrl}/${environment.imageSize.original}${image.file_path}`
          )
        ),
        catchError(error => throwError(() => new Error('Error fetching movie wallpapers')))
