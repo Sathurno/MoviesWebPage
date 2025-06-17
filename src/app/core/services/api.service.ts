@@ -10,7 +10,7 @@ import { Backdrop } from '../models/backdrop.model';
 })
 export class ApiService {
   private apiKey = environment.apiKey;
-  private apiUrl = 'https://api.themoviedb.org/3';
+  private apiUrl = environment.apiUrl;
   private language = 'en-US';
 
   constructor(private http: HttpClient) {}
