@@ -54,6 +54,52 @@ ng e2e
 
 Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
 
+## Deployment on Vercel
+
+This project is configured for deployment on Vercel with Server-Side Rendering (SSR).
+
+### Prerequisites
+
+1. Install Vercel CLI:
+```bash
+npm i -g vercel
+```
+
+2. Make sure you have a Vercel account at [vercel.com](https://vercel.com)
+
+### Deploy Steps
+
+1. **Build the project locally** (optional, for testing):
+```bash
+npm run build:prod
+```
+
+2. **Deploy to Vercel**:
+```bash
+vercel
+```
+
+3. **Follow the prompts**:
+   - Login to your Vercel account if not already logged in
+   - Choose to link to existing project or create new one
+   - Confirm the deployment settings
+
+4. **For production deployment**:
+```bash
+vercel --prod
+```
+
+### Environment Variables
+
+The project uses the following environment variables (already configured in the code):
+- `apiKey`: Your TMDB API key
+- `apiUrl`: TMDB API base URL
+- `imageBaseUrl`: TMDB image base URL
+
+### Automatic Deployments
+
+Once connected to Vercel, every push to your main branch will automatically trigger a new deployment.
+
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.

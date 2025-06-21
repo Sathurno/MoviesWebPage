@@ -44,3 +44,4 @@ Thumbs.db
 #variables de entorno
 .env
 src/environments/environment.local.ts
+.vercel

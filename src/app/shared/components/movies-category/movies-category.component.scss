@@ -2,9 +2,9 @@
 @use 'abstracts/mixins';
 
 .movie-category {
+  margin: 20px 0;
   display: flex;
   flex-direction: column;
-  margin-bottom: 30px;
   position: relative; /* Para asegurarnos de que el sticky funcione correctamente */
 }
 
@@ -21,6 +21,13 @@
   z-index: 10; /* Asegura que el título se quede encima de otros elementos */
   width: 90%; /* Se ajusta al 90% del ancho del contenedor */
   padding: 10px 0; /* Se mantiene el padding vertical */
+
+  h2 {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+    color: #fff;
+    text-align: left;
+  }
 }
 
 .custom-carousel {
@@ -40,40 +47,43 @@
 }
 
 .movie-card {
+  cursor: pointer;
+  transition: transform 0.3s ease;
   margin-top: 90px;
   width: 100%;
   padding: 25px;
   max-width: 400px;
   text-align: center;
   position: relative;  /* Para que el efecto hover de la imagen no afecte el layout */
-}
-
-.movie-poster {
-  cursor: pointer;
-  width: 100%;
-  min-width: 220px;
-  border-radius: 10px;
-  transition: transform 0.3s ease;  /* Transición para el agrandado de la imagen */
 
   &:hover {
-    transform: scale(1.1);  /* Agrandar imagen */
+    transform: translateY(-5px);
   }
-}
 
-.movie-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  .movie-poster {
+    width: 100%;
+    border-radius: 8px;
+  }
 }
 
 .skeleton-container {
   display: flex;
-  flex-direction: row;
-  gap: 1rem;
-  overflow: hidden;
-  padding: 1rem;
-  .border {
-    flex-shrink: 0;
-    width: calc(20% - 1rem);
+  gap: 20px;
+}
+
+.movies-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 15px;
+
+  .movie-card {
+    background-color: transparent;
+    border: none;
+    padding: 0;
+
+    .movie-poster {
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    }
   }
 }
 
@@ -172,4 +182,84 @@
 
 .movie-card:hover .movie-info-overlay {
   opacity: 1;
+}
+
+// Carousel specific styles
+:host ::ng-deep {
+  .p-carousel .p-carousel-indicators .p-carousel-indicator.p-highlight button {
+    background-color: #fff;
+  }
+
+  .p-carousel .p-carousel-indicators .p-carousel-indicator button {
+    background-color: rgba(255, 255, 255, 0.5);
+    width: 0.5rem;
+    height: 0.5rem;
+  }
+
+  .p-carousel-prev,
+  .p-carousel-next {
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    color: #fff;
+    width: 3rem;
+    height: 3rem;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.8);
+    }
+  }
+
+  .p-carousel-items-container {
+    .movie-card {
+      .relative {
+        .p-tag {
+          display: none; // Ocultar si no se necesita
+        }
+      }
+
+      .flex {
+        display: none; // Ocultar si no se necesita
+      }
+    }
+  }
+}
+
+// Mobile adjustments
+@media (max-width: 768px) {
+  .movie-category {
+    margin: 15px 0;
+
+    .category-header h2 {
+      font-size: 1.5rem;
+    }
+  }
+
+  .movies-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .movies-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+}
+
+// Cleanup conflicting styles from previous implementation if any
+::ng-deep .category-header h2 {
+  // any styles to override if needed
+}
+
+::ng-deep .movies-container {
+  // any styles to override if needed
+}
+
+::ng-deep .p-carousel-container, ::ng-deep .p-carousel-prev, ::ng-deep .p-carousel-next {
+  // any styles to override if needed
+}
+
+// Ensure this component does not leak styles
+:host {
+  display: block;
 }

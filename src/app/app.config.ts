@@ -9,13 +9,19 @@ import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeng/themes/aura';
 
 export const appConfig: ApplicationConfig = {
-  providers: [provideAnimationsAsync(),
+  providers: [
+    provideAnimationsAsync(),
     providePrimeNG({
-        theme: {
-            preset: Aura
-        }
+      theme: {
+        preset: Aura
+      }
     }), 
-    provideZoneChangeDetection({ eventCoalescing: true }), 
-    provideRouter(routes), provideClientHydration(withEventReplay()), 
-    provideHttpClient(withFetch())]
+    provideZoneChangeDetection({ 
+      eventCoalescing: true,
+      runCoalescing: true
+    }), 
+    provideRouter(routes), 
+    provideClientHydration(withEventReplay()), 
+    provideHttpClient(withFetch())
+  ]
 };

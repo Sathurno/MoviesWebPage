@@ -1,14 +1,16 @@
-import { Component, HostListener, OnInit, OnDestroy, PLATFORM_ID, Inject } from '@angular/core';
+import { Component, HostListener, OnInit, OnDestroy, PLATFORM_ID, Inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { map, Observable, of, Subscription } from 'rxjs';
+import { map, Observable, of, Subscription, forkJoin, timer, delay, switchMap, tap } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
+import { takeUntil, finalize } from 'rxjs/operators';
 
 // Services
 import { MovieService } from '../../core/services/movie.service';
 import { Movie } from '../../core/models/movie.model';
 import { Backdrop } from '../../core/models/backdrop.model';
 import { SearchStateService } from '../../core/services/search-state.service';
+import { LoadingService } from '../../core/services/loading.service';
 
 // Components
 import { MovieCategoryComponent } from "../../shared/components/movies-category/movies-category.component";
@@ -43,9 +45,11 @@ export class HomeComponent implements OnInit, OnDestroy {
   searchQuery: string = '';
   private searchSubscription: Subscription | undefined;
   private querySubscription: Subscription | undefined;
+  private destroy$ = new Subscription();
 
   showNavigators = true;
   isMobile = false;
+  isInitialLoad = true;
 
   @HostListener('window:resize', ['$event'])
   onResize(event?: any) {
@@ -57,32 +61,78 @@ export class HomeComponent implements OnInit, OnDestroy {
   constructor(
     private movieService: MovieService,
     private searchStateService: SearchStateService,
+    private loadingService: LoadingService,
     private router: Router,
+    private cdr: ChangeDetectorRef,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.onResize();
   }
 
   ngOnInit() {
-    this.movieService.getPopularMovies().subscribe(movies => {
-      this.popularMovies = movies;
-      if (this.popularMovies.length > 0) {
-        this.loadMovieDetails(this.popularMovies[0]);
+    this.loadInitialData();
+    this.setupSearchSubscriptions();
+  }
+
+  private loadInitialData(): void {
+    const dataFetch$ = this.movieService.getPopularMovies().pipe(
+      tap(movies => {
+        this.popularMovies = movies;
+      }),
+      switchMap(movies => {
+        const genresAndCategories$ = this.movieService.getGenreList('movie').pipe(
+          switchMap(genres => {
+            this.movieCategories = genres.slice(0, 11).map((genre: { id: number; name: string; }) => ({
+              id: genre.id,
+              name: genre.name,
+              movies$: of([]),
+              loading: false,
+              loaded: false
+            }));
+            
+            const initialCategories = this.movieCategories.slice(0, 3);
+            if (initialCategories.length === 0) {
+              return of([]);
+            }
+
+            const categoryLoaders$ = initialCategories.map(category => {
+              category.loading = true;
+              return this.movieService.getMediaByGenreRange('movie', category.id, [1, 2]).pipe(
+                tap(catMovies => {
+                  category.loading = false;
+                  category.loaded = true;
+                  const uniqueMovies = catMovies.filter(({ id }) => !this.allMovies.has(Number(id)) && this.allMovies.add(Number(id)));
+                  category.movies$ = of(this.isMobile ? uniqueMovies.slice(0, 9) : uniqueMovies);
+                })
+              );
+            });
+            return forkJoin(categoryLoaders$);
+          })
+        );
+
+        const movieDetails$ = movies.length > 0 ? this.loadMovieDetails(movies[0]) : of(null);
+
+        return forkJoin([genresAndCategories$, movieDetails$]);
+      })
+    );
+
+    of(null).pipe(
+      delay(0),
+      tap(() => this.loadingService.show()),
+      switchMap(() => dataFetch$),
+      finalize(() => {
+        this.isInitialLoad = false;
+        this.loadingService.hide();
+        this.cdr.detectChanges();
+      })
+    ).subscribe({
+      error: (error) => {
+        console.error('Error loading initial data:', error);
       }
     });
+  }
 
-    this.movieService.getGenreList('movie').subscribe((genres: { id: number; name: string }[]) => {
-      this.movieCategories = genres.slice(0, 11).map(({ id, name }) => {
-        return {
-          id,
-          name,
-          movies$: of([]),
-          loading: false,
-          loaded: false
-        };
-      });
-    });
-    
+  private setupSearchSubscriptions(): void {
     this.searchSubscription = this.searchStateService.isSearching$.subscribe(isSearching => {
       this.isSearching = isSearching;
       if (isSearching) {
@@ -101,15 +151,16 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.destroy$.unsubscribe();
     this.searchSubscription?.unsubscribe();
     this.querySubscription?.unsubscribe();
   }
 
-  loadMovieDetails(movie: Movie) {
-    if (movie.logosUrls) { // Logos already loaded
-      return;
+  loadMovieDetails(movie: Movie): Observable<void> {
+    if (movie.logosUrls) {
+      return of(undefined);
     }
-    this.movieService.initializeMoviesLogos([movie]);
+    return this.movieService.initializeMoviesLogos([movie]);
   }
 
   loadCategory(category: { id: number; name: string; movies$: Observable<Movie[]>; loading: boolean; loaded: boolean }) {
@@ -124,6 +175,10 @@ export class HomeComponent implements OnInit, OnDestroy {
         category.loaded = true;
         const uniqueMovies = movies.filter(({ id }) => !this.allMovies.has(Number(id)) && this.allMovies.add(Number(id)));
         return this.isMobile ? uniqueMovies.slice(0, 9) : uniqueMovies;
+      }),
+      finalize(() => {
+        category.loading = false;
+        this.cdr.detectChanges();
       })
     );
   }
@@ -134,7 +189,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     
     const movie = this.popularMovies[event.page];
     if (movie) {
-      this.loadMovieDetails(movie);
+      this.loadMovieDetails(movie).subscribe();
     }
   }
 
