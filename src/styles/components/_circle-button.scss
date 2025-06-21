@@ -1,0 +1,26 @@
+@use 'abstracts/variables' as v;
+@use 'abstracts/breakpoints' as b;
+
+.circle-button {
+  height: 100%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  border: none;
+  cursor: pointer;
+  margin-left: 50px;
+  margin-right: 100px;
+  transition: background-color 0.3s;
+  background-color: rgba(104, 104, 104, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+
+  @include b.respond-to('mobile') {
+    margin-bottom: 20px;
+    width: 60px;
+    height: 60px;
+  }
+} 

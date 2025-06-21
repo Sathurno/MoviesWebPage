@@ -1,0 +1,16 @@
+@use 'sass:map';
+
+$breakpoints: (
+  'mobile': 768px,
+  'tablet': 1000px,
+  'desktop': 1100px,
+  'large-desktop': 1500px
+);
+
+@mixin respond-to($breakpoint) {
+  @if map.has-key($breakpoints, $breakpoint) {
+    @media (max-width: map.get($breakpoints, $breakpoint)) {
+      @content;
+    }
+  }
+}

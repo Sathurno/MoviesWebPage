@@ -1,20 +1,28 @@
 <div class="movie-banner">
   <p-carousel 
-    [value]="allBackdrops" 
-    [responsiveOptions]="responsiveOptions" 
-    [autoplayInterval]="10000"
+    [value]="movies" 
+    [responsiveOptions]="responsiveOptions"
+    [autoplayInterval]="7000"
+    [showNavigators]="showNavigators"
     [numVisible]="1"
+    [showIndicators]="showNavigators"
     (onPage)="onPageChange($event)">
     
-    <ng-template let-backdrop pTemplate="item">
+    <ng-template let-movie pTemplate="item">
       <div class="movie-item">
-        <img [src]="backdrop.getBackdropUrl()" alt="Backdrop" class="w-full rounded-border" />
-        
+        <div class="movie-info">
+          <img *ngIf="movie.logosUrls?.length > 0; else showTitle" [src]="movie.logosUrls[0]" alt="Movie Logo" class="movie-logo" />
+          <ng-template #showTitle>
+            <h2 class="movie-title">{{ movie.title }}</h2>
+          </ng-template>
+          <p class="movie-description">{{ movie.description }}</p>
+        </div>
         <div class="backdrop-thumbnails">
-          <div *ngFor="let thumb of selectedThumbnails">
-            <img [src]="thumb.getBackdropUrl()" alt="Thumbnail" class="thumbnail" />
+          <div *ngFor="let thumb of movie.thumbnails">
+            <img [src]="thumb.getBackdropUrl()" alt="Thumbnail" class="thumbnail" (click)="onThumbnailClick(thumb)"/>
           </div>
         </div>
+        <img [src]="getImageForCarousel(movie)" alt="Backdrop" class="big-image" />
       </div>
     </ng-template>
   </p-carousel>

@@ -1,27 +1,28 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Observable, forkJoin } from 'rxjs';
+import { Component, EventEmitter, Input, OnInit, Output, HostListener, PLATFORM_ID, Inject, OnDestroy } from '@angular/core';
+import { Observable, Subscription } from 'rxjs';
 import { Movie } from '../../../core/models/movie.model';
 import { Backdrop } from '../../../core/models/backdrop.model';
 import { MovieService } from '../../../core/services/movie.service';
 import { CarouselModule } from 'primeng/carousel';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-movie-banner',
   templateUrl: './movies-banner.component.html',
   styleUrls: ['./movies-banner.component.scss'],
   imports: [CarouselModule, CommonModule],
+  standalone: true
 })
-export class MoviesBannerComponent implements OnInit {
-  @Input() movies$: Observable<Movie[]> = new Observable<Movie[]>();
+export class MoviesBannerComponent implements OnInit, OnDestroy {
+  @Input() movies$!: Observable<Movie[]>;
   @Output() pageChanged = new EventEmitter<number>(); 
 
-  allBackdrops: Backdrop[] = [];
-  selectedMovieBackdrops: Backdrop[] = [];
   movies: Movie[] = [];
-  selectedThumbnails: Backdrop[] = [];
-  selectedMovieIndex: number = 0;
-  loading: boolean = true;
+  selectedImage: Backdrop | null = null;
+  carouselPosition: number = 0;
+  showNavigators = false;
+  isBrowser: boolean;
+  private subscription: Subscription = new Subscription();
 
   responsiveOptions: any[] = [
     { breakpoint: '1024px', numVisible: 1, numScroll: 1 },
@@ -29,42 +30,60 @@ export class MoviesBannerComponent implements OnInit {
     { breakpoint: '560px', numVisible: 1, numScroll: 1 }
   ];
 
-  constructor(private movieService: MovieService) {}
+  constructor(
+    private movieService: MovieService,
+    @Inject(PLATFORM_ID) platformId: Object
+  ) {
+    this.isBrowser = isPlatformBrowser(platformId);
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    if (this.isBrowser) {
+      this.showNavigators = window.innerWidth >= 800;
+    }
+  }
 
   ngOnInit() {
-    this.movies$.subscribe(movies => {
-      if (movies.length > 0) {
-        this.loadAllMoviesBackdrops(movies);
-      }
-    });
+    if (this.isBrowser) {
+      this.showNavigators = window.innerWidth >= 800;
+    }
+
+    if (this.movies$) {
+      this.subscription.add(
+        this.movies$.subscribe({
+          next: (movies) => {
+            if (movies && movies.length > 0) {
+              this.movieService.initializeMoviesImages(movies);
+              this.movieService.initializeMoviesLogos(movies);
+              this.movies = movies.filter(movie => 
+                movie.description && movie.description.trim() !== '' && movie.thumbnails && movie.thumbnails?.length > 0
+              );
+            }
+          },
+          error: (error) => {
+            console.error('Error loading movies:', error);
+          }
+        })
+      );
+    }
   }
 
-  loadAllMoviesBackdrops(movies: Movie[]) {
-    this.loading = true;
-    forkJoin(movies.map(movie => this.movieService.getMoviesBackdrops([movie]))).subscribe(allBackdrops => {
-      this.allBackdrops = allBackdrops.map(backdrops => backdrops[0]).filter(Boolean);
-      
-      movies.forEach((movie, index) => {
-        movie.thumbnails = allBackdrops[index].slice(1, 5); 
-      });
-  
-      // Verificar si las miniaturas se cargan correctamente
-      console.log('Thumbnails:', movies[0]?.thumbnails);
-  
-      this.selectedThumbnails = movies[0]?.thumbnails || [];
-      this.loading = false;
-    });
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
-  
 
   onPageChange(event: any) {
-    this.selectedMovieIndex = event.page;
-  
-    // Asegúrate de que la película seleccionada tenga miniaturas
-    const selectedMovie = this.movies[this.selectedMovieIndex];
-    this.selectedThumbnails = selectedMovie?.thumbnails || [];
-  
-    // Actualizar la portada de la película
-    this.selectedMovieBackdrops = [this.allBackdrops[this.selectedMovieIndex]]; // Asegúrate de que allBackdrops está alineado con las películas
+    this.carouselPosition = event.page;
+    this.selectedImage = null;
+    this.pageChanged.emit(event.page);
+  }
+
+  onThumbnailClick(thumb: Backdrop) {
+    this.selectedImage = thumb;
+  }
+
+  getImageForCarousel(movie: Movie): string {
+    return this.selectedImage?.getBackdropUrl() || movie.principalImage?.getBackdropUrl() || '';
   }
 }

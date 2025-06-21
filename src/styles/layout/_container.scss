@@ -1,0 +1,11 @@
+@use 'abstracts/variables' as v;
+
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding: 0 v.$container-padding;
+  max-width: v.$container-max-width;
+  margin: 0 auto;
+  text-align: center;
+} 

@@ -1,0 +1,7 @@
+@mixin text-shadow($x, $y, $blur, $color) {
+  text-shadow: $x $y $blur $color;
+}
+
+@mixin transition($properties, $duration, $timing-function) {
+  transition: $properties $duration $timing-function;
+} 
