@@ -1,0 +1,25 @@
+<header class="header" [class.scrolled]="isScrolled">
+  <div class="header-inner">
+    <a routerLink="/" class="logo">
+      <i class="fas fa-film"></i>
+      <span>MoviesWebPage</span>
+    </a>
+
+    <nav class="navigation">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a>
+      <a routerLink="/movies" routerLinkActive="active">Movies</a>
+      <a routerLink="/series" routerLinkActive="active">Series</a>
+    </nav>
+    
+    <div class="header-actions">
+      <div class="search-container">
+        <input type="text" class="search-bar" placeholder="Buscar películas..." #searchInput>
+        <button *ngIf="searchInput.value" class="clear-button" (click)="clearSearch()">&#x2715;</button>
+        <i class="fas fa-search search-icon"></i>
+      </div>
+      <div class="profile-container">
+        <button class="circle-button"></button>
+      </div>
+    </div>
+  </div>
+</header> 

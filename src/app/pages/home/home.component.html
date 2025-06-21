@@ -1,37 +1,50 @@
-<div class="container">
-  <div class="movie-banner">
-    <p-carousel 
-      [value]="popularMovies" 
-      [responsiveOptions]="[{ breakpoint: '1024px', numVisible: 1, numScroll: 1 }]"
-      [autoplayInterval]="7000"
-      [showNavigators]="false"
-      [numVisible]="1"
-      [showIndicators]="showNavigators"
-      (onPage)="onPageChange($event)">
-    
-      <ng-template let-movie pTemplate="item">
-        <div class="movie-item">
-          <div class="movie-info">
-            <img *ngIf="movie.logosUrls?.length; else showTitle" [src]="movie.logosUrls[0]" alt="Movie Logo" class="movie-logo" />
-            <ng-template #showTitle><h2 class="movie-title">{{ movie.title }}</h2></ng-template>
-            <p class="movie-description">{{ movie.description }}</p>
+<ng-container *ngIf="!isSearching; else searchGrid">
+  <div class="container">
+    <div class="movie-banner">
+      <p-carousel 
+        [value]="popularMovies" 
+        [responsiveOptions]="[{ breakpoint: '1024px', numVisible: 1, numScroll: 1 }]"
+        [autoplayInterval]="7000"
+        [showNavigators]="showNavigators"
+        [numVisible]="1"
+        [showIndicators]="false"
+        (onPage)="onPageChange($event)">
+      
+        <ng-template let-movie pTemplate="item">
+          <div class="movie-item">
+            <div class="movie-info" [class.long-description-info]="isLongDescription(movie.description)">
+              <img *ngIf="movie.logosUrls?.length; else showTitle" [src]="movie.logosUrls[0]" alt="Movie Logo" class="movie-logo" />
+              <ng-template #showTitle><h2 class="movie-title">{{ movie.title }}</h2></ng-template>
+              <p class="movie-description">{{ movie.description }}</p>
+            </div>
+            <div class="backdrop-thumbnails">
+              <img *ngFor="let thumb of movie.thumbnails" [src]="thumb.getBackdropUrl()" alt="Thumbnail" class="thumbnail" (click)="onThumbnailClick(thumb)"/>
+            </div>
+            <img [src]="getImageForCarousel(movie)" alt="Backdrop" class="big-image" />
           </div>
-          <div class="backdrop-thumbnails">
-            <img *ngFor="let thumb of movie.thumbnails" [src]="thumb.getBackdropUrl()" alt="Thumbnail" class="thumbnail" (click)="onThumbnailClick(thumb)"/>
-          </div>
-          <img [src]="getImageForCarousel(movie)" alt="Backdrop" class="big-image" />
-        </div>
-      </ng-template>
-    </p-carousel>
-  </div>
+        </ng-template>
+      </p-carousel>
+    </div>
 
-  <div class="movie-grid">
-    <div *ngFor="let category of movieCategories" (appLazyLoad)="loadCategory(category)">
-      <app-movie-category 
-        [title]="category.name" 
-        [movies]="(category.movies$ | async) || []"
-        [loading]="category.loading">
-      </app-movie-category>
+    <div class="movie-grid">
+      <div *ngFor="let category of movieCategories" (appLazyLoad)="loadCategory(category)">
+        <app-movie-category 
+          [title]="category.name" 
+          [movies]="(category.movies$ | async) || []"
+          [loading]="category.loading">
+        </app-movie-category>
+      </div>
     </div>
   </div>
-</div>
+</ng-container>
+
+<ng-template #searchGrid>
+  <div class="search-title-container" *ngIf="searchQuery">
+    <h2>Resultados para: "{{ searchQuery }}"</h2>
+  </div>
+  <div class="search-results-grid">
+    <app-movie-card *ngFor="let movie of searchResults" [movie]="movie"></app-movie-card>
+  </div>
+</ng-template>
+
+<app-footer></app-footer>

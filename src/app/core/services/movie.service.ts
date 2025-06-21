@@ -10,6 +10,7 @@ import { environment } from '../../../environments/environment';
   providedIn: 'root'
 })
 export class MovieService {
+  private processedBackdropLinks: Set<string> = new Set();
   constructor(private apiService: ApiService) {}
   private mapMovieData(item: any): Movie {
     return {
@@ -24,23 +25,24 @@ export class MovieService {
   }
 
    //Aigna a cada pelicula de la lista una imagen principal y sus miniaturas 
-   initializeMoviesImages(movies: Movie[]) {
-    forkJoin(movies.map(movie => this.getMoviesScreenCaptures([movie])))  // Cambiar a getMoviesScreenCaptures
-      .subscribe(movieScreenCaptures => {
-        movies.forEach((movie, index) => {
-          // Filtrar imágenes por aspect_ratio adecuado para calidad (ej. 1.77 para 16:9)
-          const validScreenCaptures = movieScreenCaptures[index].filter(screenCapture => 
-            screenCapture.width >= 1920 && screenCapture.height >= 1080 && screenCapture.aspect_ratio >= 1.77
-          );
-          
-          // Obtener 4 imágenes aleatorias sin repetir
-          const uniqueScreenCaptures = this.getRandomImages(validScreenCaptures, 5);
-      
-          // Asignar la principal y los thumbnails
-          movie.principalImage = uniqueScreenCaptures[0] || null;
-          movie.thumbnails = uniqueScreenCaptures.slice(1) || [];
-        });
-      });
+   initializeMoviesImages(movies: Movie[]): Observable<Movie[]> {
+    if (!movies || movies.length === 0) {
+        return of([]);
+    }
+    const movieObservables = movies.map(movie =>
+        this.getMoviesScreenCaptures([movie]).pipe(
+            map(screenCaptures => {
+                const validScreenCaptures = screenCaptures.filter(sc =>
+                    sc.width >= 1920 && sc.height >= 1080 && sc.aspect_ratio >= 1.77
+                );
+                const uniqueScreenCaptures = this.getRandomImages(validScreenCaptures, 5);
+                movie.principalImage = uniqueScreenCaptures[0] || null;
+                movie.thumbnails = uniqueScreenCaptures.slice(1) || [];
+                return movie;
+            })
+        )
+    );
+    return forkJoin(movieObservables);
   }
   
   getMoviesScreenCaptures(movies: Movie[]): Observable<Backdrop[]> {
@@ -97,8 +99,15 @@ export class MovieService {
   
   //Obtener pelis populares
   getPopularMovies(): Observable<Movie[]> {
+    this.processedBackdropLinks.clear();
     return this.apiService.getCategory('popular', 1, 'movie', { language: 'es' }).pipe(
-      map((response: any) => response.results.map(this.mapMovieData))
+      map((response: any) => response.results.map(this.mapMovieData)),
+      switchMap(movies => this.initializeMoviesImages(movies)),
+      map(moviesWithImages => moviesWithImages.filter(movie =>
+        movie.principalImage != null &&
+        movie.description?.trim() &&
+        movie.thumbnails && movie.thumbnails.length > 0
+      ))
     );
   }
   
@@ -109,7 +118,6 @@ export class MovieService {
       map((response: any) => response.results.map(this.mapMovieData))
     );
   }
-  private processedBackdropLinks: Set<string> = new Set();
   //obtener backdrops
   getMoviesBackdrops(movies: Movie[]): Observable<Backdrop[]> {
     return forkJoin(
@@ -218,6 +226,18 @@ export class MovieService {
         name: genre.name
       }))),
       catchError(error => throwError(() => new Error('Error fetching genres')))
+    );
+  }
+
+  searchMovies(query: string): Observable<Movie[]> {
+    if (!query.trim()) {
+      return of([]);
+    }
+    return this.apiService.search(query, 1).pipe(
+      map(response => response.results
+        .filter((item: any) => item.media_type === 'movie' && item.poster_path)
+        .map(this.mapMovieData)
+      )
     );
   }
 }

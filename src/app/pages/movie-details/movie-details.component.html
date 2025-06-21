@@ -1,0 +1,149 @@
+<div class="movie-details-container">
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="loading-spinner"></div>
+    <p>Cargando detalles de la película...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="error-container">
+    <h2>Error al cargar la película</h2>
+    <button (click)="goBack()" class="btn btn-primary">Volver al inicio</button>
+  </div>
+
+  <!-- Movie Details Content -->
+  <div *ngIf="movie && !loading" class="movie-content">
+    <!-- Movie Backdrop Section -->
+    <div class="movie-backdrop" 
+         [style.background-image]="'url(' + (movie.principalImage?.file_path || movie.imgSrc) + ')'">
+      <div class="backdrop-overlay"></div>
+    </div>
+
+    <div class="container content-wrapper">
+      <!-- Back Button -->
+      <button (click)="goBack()" class="back-button">
+        <i class="fas fa-arrow-left"></i>
+        <span>Volver</span>
+      </button>
+
+      <!-- Movie Header -->
+      <header class="movie-header">
+        <div class="movie-poster">
+          <img [src]="movie.imgSrc" [alt]="movie.title" class="poster-image">
+        </div>
+        <div class="movie-info">
+          <div class="movie-title-section">
+            <h1 class="movie-title">{{ movie.title }}</h1>
+            <div class="rating-circle">
+              {{ movie.rating }}%
+            </div>
+          </div>
+          
+          <div class="genres" *ngIf="movie.genres">
+            <span *ngFor="let genre of movie.genres" class="genre-pill">{{ genre.name }}</span>
+          </div>
+
+          <div class="action-buttons">
+            <button class="btn btn-primary">
+              <i class="fas fa-play"></i>
+              Reproducir
+            </button>
+            <button class="btn btn-secondary">
+              <i class="far fa-bookmark"></i>
+              Guardar
+            </button>
+            <button class="btn btn-secondary">
+              <i class="far fa-heart"></i>
+              Favorito
+            </button>
+            <button class="btn btn-secondary">
+              <i class="fas fa-share-alt"></i>
+              Compartir
+            </button>
+          </div>
+          
+          <div class="synopsis" *ngIf="movie.description">
+            <h3>Sinopsis</h3>
+            <p>{{ movie.description }}</p>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Content Grid -->
+      <main class="main-content-grid">
+        <div class="left-column">
+          <!-- Actors Section -->
+          <section class="actors-section" *ngIf="cast.length > 0">
+            <h2>Actores</h2>
+            <div class="actors-scroll-container">
+              <div class="actor-card" *ngFor="let actor of cast">
+                <div class="actor-photo">
+                  <img [src]="actor.profile_path" [alt]="actor.name" *ngIf="actor.profile_path; else noPhoto">
+                  <ng-template #noPhoto>
+                    <div class="no-photo-placeholder">
+                      <i class="fas fa-user"></i>
+                    </div>
+                  </ng-template>
+                </div>
+                <div class="actor-info">
+                  <p class="actor-name">{{ actor.name }}</p>
+                  <p class="actor-character">{{ actor.character }}</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Similar Movies -->
+          <section class="similar-movies" *ngIf="similarMovies.length > 0">
+            <h2>Películas similares</h2>
+            <div class="movies-grid">
+              <app-movie-card *ngFor="let movie of similarMovies" [movie]="movie"></app-movie-card>
+            </div>
+          </section>
+        </div>
+        
+        <!-- Sidebar -->
+        <aside class="sidebar right-column">
+          <div class="movie-facts">
+            <h3>Datos de la película</h3>
+            <div class="fact-item" *ngIf="movie.release_date">
+              <span class="fact-label">Fecha de estreno</span>
+              <span class="fact-value">{{ movie.release_date | date:'longDate' }}</span>
+            </div>
+            <div class="fact-item" *ngIf="movie.runtime">
+              <span class="fact-label">Duración</span>
+              <span class="fact-value">{{ movie.runtime }} min</span>
+            </div>
+            <div class="fact-item" *ngIf="movie.budget">
+              <span class="fact-label">Presupuesto</span>
+              <span class="fact-value">{{ movie.budget | currency:'USD':'symbol':'1.0-0' }}</span>
+            </div>
+            <div class="fact-item" *ngIf="movie.revenue">
+              <span class="fact-label">Recaudación</span>
+              <span class="fact-value">{{ movie.revenue | currency:'USD':'symbol':'1.0-0' }}</span>
+            </div>
+            <div class="fact-item">
+              <span class="fact-label">Votos</span>
+              <span class="fact-value">{{ movie.vote | number:'1.1-1' }}/10</span>
+            </div>
+          </div>
+          
+          <div class="director-card" *ngIf="director">
+            <div class="director-photo">
+              <img [src]="director.profile_path" [alt]="director.name" *ngIf="director.profile_path; else noDirectorPhoto">
+              <ng-template #noDirectorPhoto>
+                <div class="no-photo-placeholder">
+                  <i class="fas fa-user"></i>
+                </div>
+              </ng-template>
+            </div>
+            <div class="director-title">DIRECTOR DE LA PELICULA</div>
+            <p class="director-name">{{ director.name }}</p>
+          </div>
+        </aside>
+      </main>
+    </div>
+  </div>
+</div>
+
+<app-footer></app-footer> 

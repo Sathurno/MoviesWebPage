@@ -5,6 +5,7 @@ import { Backdrop } from '../../../core/models/backdrop.model';
 import { MovieService } from '../../../core/services/movie.service';
 import { CarouselModule } from 'primeng/carousel';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-movie-banner',
@@ -32,6 +33,7 @@ export class MoviesBannerComponent implements OnInit, OnDestroy {
 
   constructor(
     private movieService: MovieService,
+    private router: Router,
     @Inject(PLATFORM_ID) platformId: Object
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
@@ -81,6 +83,11 @@ export class MoviesBannerComponent implements OnInit, OnDestroy {
 
   onThumbnailClick(thumb: Backdrop) {
     this.selectedImage = thumb;
+  }
+
+  onMovieClick(movie: Movie) {
+    console.log('Movie clicked:', movie);
+    this.router.navigate(['/movie', movie.id]);
   }
 
   getImageForCarousel(movie: Movie): string {

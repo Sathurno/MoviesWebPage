@@ -7,11 +7,8 @@
 @use 'base/typography';
 
 // Components
-@use 'components/search-bar';
-@use 'components/circle-button';
 
 // Layout
-@use 'layout/header';
 @use 'layout/container';
 
 // Base styles
@@ -20,10 +17,20 @@
   background-color: rgb(0, 0, 0);
 }
 
+main {
+  padding-top: 100px;
+}
+
 // Global media queries
+@include breakpoints.respond-to('tablet') {
+  main {
+    padding-top: 80px;
+  }
+}
+
 @include breakpoints.respond-to('mobile') {
-  :root {
-    margin-top: 200px;
+  main {
+    padding-top: 70px;
   }
 }
 
@@ -34,34 +41,8 @@
   }
 }
 
-@include breakpoints.respond-to('tablet') {
-  .backdrop-thumbnails {
-    display: none;
-  }
-}
-
 @include breakpoints.respond-to('large-desktop') {
   .movie-description {
     display: none;
-  }
-}
-
-@include breakpoints.respond-to('mobile') {
-  .header {
-    flex-direction: column;
-    justify-content: center;
-    height: auto;
-    padding: 10px;
-  }
-
-  .search-bar {
-    width: 80%;
-    margin-bottom: 10px;
-  }
-
-  .circle-button {
-    margin-bottom: 20px;
-    width: 60px;
-    height: 60px;
   }
 } 

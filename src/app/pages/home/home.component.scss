@@ -31,6 +31,10 @@ $description-background: linear-gradient(to right, #f3f3f3, #cccccc);
 .movie-banner {
   position: relative;
   margin: 0 $movie-banner-margin;
+  
+  @media (max-width: 768px) {
+    margin: 0;
+  }
 }
 
 .movie-item {
@@ -60,8 +64,17 @@ $description-background: linear-gradient(to right, #f3f3f3, #cccccc);
   @include text-shadow(2px, 2px, 10px, rgba(0, 0, 0, 0.7));
 }
 
+.movie-info.long-description-info {
+  max-width: 60%; 
+
+  .movie-description {
+    font-size: clamp(0.6rem, 1vw, 1.2rem); 
+  }
+}
+
 .movie-logo {
   width: clamp(130px, 27vw, 650px);
+  max-height: clamp(100px, 15vw, 250px);
   object-fit: contain;
   margin-bottom: 10px;
 }
@@ -112,6 +125,12 @@ $description-background: linear-gradient(to right, #f3f3f3, #cccccc);
 }
 
 // Media queries
+@media (min-width: 769px) and (max-width: 1024px) {
+  .movie-banner {
+    margin-top: 40px;
+  }
+}
+
 @media (max-width: 1100px) {
   .movie-description {
     display: none;
@@ -127,5 +146,46 @@ $description-background: linear-gradient(to right, #f3f3f3, #cccccc);
 @media (max-width: 1500px) {
   .movie-description {
     display: none;
+  }
+}
+
+.movie-grid {
+  @media (max-width: 768px) {
+    ::ng-deep .category-header h2 {
+      font-size: 1.5rem;
+    }
+
+    ::ng-deep .movies-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      overflow-x: hidden;
+    }
+
+    ::ng-deep .p-carousel-container, ::ng-deep .p-carousel-prev, ::ng-deep .p-carousel-next {
+      display: none;
+    }
+  }
+}
+
+.search-title-container {
+  text-align: left;
+  h2 {
+    color: #fff;
+    font-size: 1.8rem;
+    font-weight: 600;
+  }
+}
+
+.search-results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+  padding: 20px;
+  padding-top: 40px;
+  
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+    padding-top: 40px;
   }
 }

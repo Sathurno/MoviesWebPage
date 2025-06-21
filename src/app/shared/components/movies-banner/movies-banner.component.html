@@ -9,7 +9,7 @@
     (onPage)="onPageChange($event)">
     
     <ng-template let-movie pTemplate="item">
-      <div class="movie-item">
+      <div class="movie-item" (click)="onMovieClick(movie)">
         <div class="movie-info">
           <img *ngIf="movie.logosUrls?.length > 0; else showTitle" [src]="movie.logosUrls[0]" alt="Movie Logo" class="movie-logo" />
           <ng-template #showTitle>

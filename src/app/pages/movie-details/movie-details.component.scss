@@ -1,0 +1,546 @@
+.movie-details-container {
+  min-height: 100vh;
+  background-color: #000;
+  color: #fff;
+  position: relative;
+  overflow-x: hidden;
+}
+
+// Loading and Error States
+.loading-container,
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  text-align: center;
+
+  .btn-primary {
+    background: #e50914;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 25px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+  }
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 3px solid #333;
+  border-top: 3px solid #e50914;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+// Movie Backdrop Section
+.movie-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60vh;
+  background-size: cover;
+  background-position: center 20%;
+  background-repeat: no-repeat;
+  z-index: 0;
+
+  @media (max-width: 1000px) {
+    height: 50vh;
+  }
+
+  @media (max-width: 768px) {
+    height: 40vh;
+  }
+}
+
+.backdrop-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 0.95) 30%,
+    rgba(0, 0, 0, 0.5) 70%,
+    transparent 100%
+  );
+
+  @media (min-width: 1921px) {
+    backdrop-filter: blur(10px);
+    background: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 1) 0%,
+      rgba(0, 0, 0, 0.8) 40%,
+      rgba(0, 0, 0, 0.2) 70%,
+      transparent 100%
+    );
+  }
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  width: 100%;
+}
+
+.content-wrapper {
+  position: relative;
+  z-index: 1;
+  padding-top: 25vh;
+
+  @media (max-width: 1000px) {
+    padding-top: 20vh;
+  }
+
+  @media (max-width: 768px) {
+    padding-top: 15vh;
+  }
+}
+
+.back-button {
+  background: rgba(40, 40, 40, 0.8);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 10px 20px;
+  border-radius: 25px;
+  max-width: 100px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  margin-bottom: 20px;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.9);
+    transform: translateY(-2px);
+  }
+
+  @media (max-width: 768px) {
+    margin-top: 10px;
+  }
+}
+
+.movie-header {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 50px;
+  align-items: flex-end;
+  margin-bottom: 60px;
+
+  @media (max-width: 992px) {
+    grid-template-columns: 250px 1fr;
+    gap: 40px;
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 30px;
+    align-items: center;
+    margin-bottom: 40px;
+  }
+}
+
+.movie-poster {
+  .poster-image {
+    width: 100%;
+    border-radius: 12px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    border: 3px solid rgba(255, 255, 255, 0.1);
+
+    @media (max-width: 768px) {
+      max-width: 280px;
+      margin: 0 auto;
+    }
+  }
+}
+
+.movie-info {
+  @media (max-width: 768px) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+.movie-title-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 20px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+  }
+}
+
+.movie-title {
+  font-size: 3rem;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.2;
+
+  @media (max-width: 992px) {
+    font-size: 2.5rem;
+  }
+
+  @media (max-width: 768px) {
+    font-size: 2.2rem;
+  }
+}
+
+.rating-circle {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 3px solid #4CAF50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+  background: rgba(0, 0, 0, 0.8);
+  flex-shrink: 0;
+}
+
+.genres {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 25px;
+  
+  @media (max-width: 768px) {
+    justify-content: center;
+  }
+}
+
+.genre-pill {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+  }
+}
+
+.action-buttons {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    gap: 10px;
+    justify-content: center;
+  }
+}
+
+.btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 25px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+  font-size: 14px;
+
+  @media (max-width: 768px) {
+    padding: 10px 16px;
+    font-size: 12px;
+  }
+
+  &.btn-primary {
+    background: #e50914;
+    color: #fff;
+
+    &:hover {
+      background: #f40612;
+      transform: translateY(-2px);
+    }
+  }
+
+  &.btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+    }
+  }
+}
+
+.synopsis {
+  margin-bottom: 30px;
+
+  h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+  }
+
+  p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #ccc;
+    text-align: left;
+
+    @media (max-width: 768px) {
+      text-align: justify;
+      font-size: 1rem;
+    }
+  }
+}
+
+// Main Content Grid
+.main-content-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 50px;
+  padding: 40px 0;
+  align-items: start;
+
+  @media (max-width: 992px) {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+}
+
+.left-column {
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+  min-width: 0; // Fix for flexbox overflow issues
+}
+
+.actors-section,
+.similar-movies {
+  h2 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #222;
+    color: #fff;
+  }
+}
+
+.similar-movies {
+  padding-bottom: 40px;
+}
+
+.movies-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 20px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 15px;
+  }
+}
+
+.right-column {
+  position: sticky;
+  top: 20px;
+
+  @media (max-width: 992px) {
+    position: static;
+  }
+}
+
+.sidebar {
+  .movie-facts {
+    background: #1a1a1a;
+    border-radius: 12px;
+    padding: 30px;
+    margin-bottom: 30px;
+
+    h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+  }
+
+  .fact-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 15px 0;
+    border-bottom: 1px solid #333;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    .fact-label {
+      color: #999;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+      margin-right: 20px;
+    }
+
+    .fact-value {
+      font-weight: 600;
+      text-align: right;
+      flex: 1;
+    }
+  }
+}
+
+.actors-scroll-container {
+  display: flex;
+  overflow-x: auto;
+  gap: 20px;
+  padding: 20px 5px; // Extra padding to not cut off shadows/outlines
+  margin: 0 -5px;   // Compensate for padding
+  scrollbar-width: thin;
+  scrollbar-color: #e50914 #111;
+
+  &::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #111;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 4px;
+
+    &:hover {
+      background: #e50914;
+    }
+  }
+}
+
+.actor-card {
+  flex: 0 0 140px;
+  width: 140px;
+  text-align: center;
+  transition: transform 0.3s ease;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
+.actor-photo {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: 0 auto 15px;
+  border: 3px solid #333;
+  background: #1a1a1a;
+  transition: border-color 0.3s ease;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .actor-card:hover & {
+    border-color: #e50914;
+  }
+}
+
+.no-photo-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #2a2a2a;
+  color: #666;
+  font-size: 2.5rem;
+}
+
+.actor-info {
+  .actor-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+    margin: 0 0 5px 0;
+    line-height: 1.3;
+    white-space: normal;
+  }
+
+  .actor-character {
+    font-size: 0.85rem;
+    color: #999;
+    margin: 0;
+    line-height: 1.3;
+    white-space: normal;
+  }
+}
+
+.director-card {
+  background: #1a1a1a;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+
+  .director-photo {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin: 0 auto 15px;
+    border: 2px solid #333;
+    background: #1a1a1a;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .director-title {
+    font-size: 0.7rem;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+
+  .director-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #fff;
+    margin: 0;
+  }
+} 

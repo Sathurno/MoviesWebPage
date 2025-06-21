@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { CarouselModule } from 'primeng/carousel';
 import { ButtonModule } from 'primeng/button';
 import { SkeletonModule } from 'primeng/skeleton';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-movie-category',
@@ -46,10 +47,12 @@ export class MovieCategoryComponent {
       numScroll: 1
     }
   ];
+
+  constructor(private router: Router) {}
+
   onMovieClick(movie: Movie) {
     console.log('Película seleccionada:', movie);
-    // Puedes redirigir a una página de detalles o abrir un modal
+    // Navigate to movie details page
+    this.router.navigate(['/movie', movie.id]);
   }
-  
-  
 }

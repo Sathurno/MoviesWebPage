@@ -118,18 +118,19 @@
 
 @include respond-to('tablet') {
     .movie-banner {
-        margin: 0 20px;
+        margin: 0;
         
         .movie-item {
-            height: 400px;
+            height: 60vh;
+            min-height: 450px;
 
             .movie-info {
-                left: 20px;
-                bottom: 60px;
-                max-width: 70%;
+                left: 40px;
+                bottom: auto;
+                max-width: 60%;
 
                 .movie-title {
-                    font-size: 1.8rem;
+                    font-size: 2.2rem;
                 }
             }
 

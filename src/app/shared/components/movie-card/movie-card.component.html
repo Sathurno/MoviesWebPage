@@ -1,0 +1,7 @@
+<div *ngIf="movie" class="movie-card" (click)="onCardClick()">
+  <img [ngSrc]="movie.imgSrc || 'assets/images/placeholder.png'" [alt]="movie.title" class="movie-poster" width="200" height="300"/>
+  <div class="movie-info">
+    <h5>{{ movie.title }}</h5>
+    <span *ngIf="movie.rating">{{ movie.rating | number:'1.1-1' }}</span>
+  </div>
+</div> 
