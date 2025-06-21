@@ -3,16 +3,21 @@ import { Movie } from '../../../core/models/movie.model';
 import { CommonModule } from '@angular/common';
 import { CarouselModule } from 'primeng/carousel';
 import { ButtonModule } from 'primeng/button';
+import { SkeletonModule } from 'primeng/skeleton';
 
 @Component({
   selector: 'app-movie-category',
   templateUrl: './movies-category.component.html',
-  imports: [CommonModule, CarouselModule, ButtonModule],
+  imports: [CommonModule, CarouselModule, ButtonModule, SkeletonModule],
   styleUrls: ['./movies-category.component.scss'],
 })
 export class MovieCategoryComponent {
   @Input() title: string = '';
   @Input() movies: Movie[] = [];
+  @Input() loading: boolean = false;
+
+  // Array para los esqueletos de carga
+  skeletonItems = Array(5).fill(0);
 
   responsiveOptions = [
     {

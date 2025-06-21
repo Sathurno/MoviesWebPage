@@ -26,6 +26,12 @@
   </div>
 
   <div class="movie-grid">
-    <app-movie-category *ngFor="let category of movieCategories" [title]="category.name" [movies]="(category.movies$ | async) || []"></app-movie-category>
+    <div *ngFor="let category of movieCategories" (appLazyLoad)="loadCategory(category)">
+      <app-movie-category 
+        [title]="category.name" 
+        [movies]="(category.movies$ | async) || []"
+        [loading]="category.loading">
+      </app-movie-category>
+    </div>
   </div>
 </div>

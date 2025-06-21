@@ -59,3 +59,20 @@
     transform: scale(1.1);  /* Agrandar imagen */
   }
 }
+
+.movie-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.skeleton-container {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  overflow: hidden;
+  padding: 1rem;
+  .border {
+    flex-shrink: 0;
+    width: calc(20% - 1rem);
+  }
+}

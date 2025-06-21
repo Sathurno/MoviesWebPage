@@ -5,6 +5,7 @@
   height: 100%;
   aspect-ratio: 1;
   border-radius: 50%;
+  background-image: url('./../../public/images/user.jpg');
   background-size: cover;
   background-position: center;
   border: none;
@@ -12,10 +13,9 @@
   margin-left: 50px;
   margin-right: 100px;
   transition: background-color 0.3s;
-  background-color: rgba(104, 104, 104, 0.8);
   border: 1px solid rgba(255, 255, 255, 0.2);
   &:hover {
-    background-color: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.5);
   }
 
   @include b.respond-to('mobile') {
