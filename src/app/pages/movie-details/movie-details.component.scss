@@ -99,14 +99,14 @@
 .content-wrapper {
   position: relative;
   z-index: 1;
-  padding-top: 25vh;
+  padding-top: 15vh;
 
   @media (max-width: 1000px) {
-    padding-top: 20vh;
+    padding-top: 10vh;
   }
 
   @media (max-width: 768px) {
-    padding-top: 15vh;
+    padding-top: 5vh;
   }
 }
 

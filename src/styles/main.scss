@@ -18,19 +18,19 @@
 }
 
 main {
-  padding-top: 100px;
+  
 }
 
 // Global media queries
 @include breakpoints.respond-to('tablet') {
   main {
-    padding-top: 80px;
+    
   }
 }
 
 @include breakpoints.respond-to('mobile') {
   main {
-    padding-top: 70px;
+    
   }
 }
 
