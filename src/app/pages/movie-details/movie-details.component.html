@@ -29,7 +29,14 @@
       <!-- Movie Header -->
       <header class="movie-header">
         <div class="movie-poster">
-          <img [src]="movie.imgSrc" [alt]="movie.title" class="poster-image">
+          <img 
+            [src]="movie.imgSrc" 
+            [alt]="movie.title" 
+            class="poster-image"
+            width="300"
+            height="450"
+            loading="lazy"
+          >
         </div>
         <div class="movie-info">
           <div class="movie-title-section">
@@ -78,7 +85,14 @@
             <div class="actors-scroll-container">
               <div class="actor-card" *ngFor="let actor of cast">
                 <div class="actor-photo">
-                  <img [src]="actor.profile_path" [alt]="actor.name" *ngIf="actor.profile_path; else noPhoto">
+                  <img 
+                    [src]="actor.profile_path" 
+                    [alt]="actor.name" 
+                    *ngIf="actor.profile_path; else noPhoto"
+                    width="80"
+                    height="80"
+                    loading="lazy"
+                  >
                   <ng-template #noPhoto>
                     <div class="no-photo-placeholder">
                       <i class="fas fa-user"></i>
@@ -130,7 +144,14 @@
           
           <div class="director-card" *ngIf="director">
             <div class="director-photo">
-              <img [src]="director.profile_path" [alt]="director.name" *ngIf="director.profile_path; else noDirectorPhoto">
+              <img 
+                [src]="director.profile_path" 
+                [alt]="director.name" 
+                *ngIf="director.profile_path; else noDirectorPhoto"
+                width="120"
+                height="120"
+                loading="lazy"
+              >
               <ng-template #noDirectorPhoto>
                 <div class="no-photo-placeholder">
                   <i class="fas fa-user"></i>

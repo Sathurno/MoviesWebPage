@@ -11,7 +11,15 @@
     <ng-template let-movie pTemplate="item">
       <div class="movie-item" (click)="onMovieClick(movie)">
         <div class="movie-info">
-          <img *ngIf="movie.logosUrls?.length > 0; else showTitle" [src]="movie.logosUrls[0]" alt="Movie Logo" class="movie-logo" />
+          <img 
+            *ngIf="movie.logosUrls?.length > 0; else showTitle" 
+            [src]="movie.logosUrls[0]" 
+            alt="Movie Logo" 
+            class="movie-logo"
+            width="400"
+            height="100"
+            loading="lazy"
+          />
           <ng-template #showTitle>
             <h2 class="movie-title">{{ movie.title }}</h2>
           </ng-template>
@@ -19,10 +27,25 @@
         </div>
         <div class="backdrop-thumbnails">
           <div *ngFor="let thumb of movie.thumbnails">
-            <img [src]="thumb.getBackdropUrl()" alt="Thumbnail" class="thumbnail" (click)="onThumbnailClick(thumb)"/>
+            <img 
+              [src]="thumb.getBackdropUrl()" 
+              alt="Thumbnail" 
+              class="thumbnail" 
+              (click)="onThumbnailClick(thumb)"
+              width="80"
+              height="60"
+              loading="lazy"
+            />
           </div>
         </div>
-        <img [src]="getImageForCarousel(movie)" alt="Backdrop" class="big-image" />
+        <img 
+          [src]="getImageForCarousel(movie)" 
+          alt="Backdrop" 
+          class="big-image"
+          width="1200"
+          height="600"
+          loading="lazy"
+        />
       </div>
     </ng-template>
   </p-carousel>

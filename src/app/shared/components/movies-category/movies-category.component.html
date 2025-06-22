@@ -1,5 +1,5 @@
 <div class="movie-category" *ngIf="loading || movies.length > 0">
-  <div class="category-header">
+  <div class="category-header" *ngIf="!isMobile">
       <h2>{{ title }}</h2>
   </div>
 
@@ -18,8 +18,22 @@
       <ng-template let-movie pTemplate="item">
         <div class="border border-surface-200 dark:border-surface-700 rounded m-2 p-4 movie-card" (click)="onMovieClick(movie)">
           <div class="mb-4">
-            <div class="relative mx-auto">
-              <img [src]="movie.imgSrc" [alt]="movie.title" class="movie-poster" loading="lazy" />
+            <div class="relative mx-auto poster-container">
+              <img 
+                [src]="movie.imgSrc" 
+                [alt]="movie.title" 
+                class="movie-poster" 
+                loading="lazy"
+                width="200"
+                height="300"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+              />
+              <div class="poster-placeholder" style="display: none;">
+                <div class="placeholder-content">
+                  <i class="pi pi-image"></i>
+                  <span>{{ movie.title }}</span>
+                </div>
+              </div>
               <p-tag value="Popular" severity="success" class="absolute" [ngStyle]="{ 'left.px': 5, 'top.px': 5 }"></p-tag>
             </div>
           </div>
@@ -33,9 +47,28 @@
     </ng-container>
 
     <ng-template #mobileGrid>
+      <div class="mobile-category-title">
+        <h3>{{ title }}</h3>
+      </div>
       <div class="movies-grid">
         <div *ngFor="let movie of movies" class="movie-card" (click)="onMovieClick(movie)">
-          <img [src]="movie.imgSrc" [alt]="movie.title" class="movie-poster" loading="lazy" />
+          <div class="poster-container">
+            <img 
+              [src]="movie.imgSrc" 
+              [alt]="movie.title" 
+              class="movie-poster" 
+              loading="lazy"
+              width="150"
+              height="225"
+              onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            />
+            <div class="poster-placeholder" style="display: none;">
+              <div class="placeholder-content">
+                <i class="pi pi-image"></i>
+                <span>{{ movie.title }}</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </ng-template>

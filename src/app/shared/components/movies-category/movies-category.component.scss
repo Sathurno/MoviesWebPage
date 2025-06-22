@@ -30,6 +30,20 @@
   }
 }
 
+// Título para móvil
+.mobile-category-title {
+  margin-bottom: 15px;
+  padding: 0 15px;
+  
+  h3 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #fff;
+    margin: 0;
+    text-align: left;
+  }
+}
+
 .custom-carousel {
   
   .p-carousel-content {
@@ -59,10 +73,56 @@
   &:hover {
     transform: translateY(-5px);
   }
+}
 
+// Contenedor de poster con dimensiones fijas
+.poster-container {
+  position: relative;
+  width: 200px;
+  height: 300px;
+  margin: 0 auto;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #2a2a2a;
+  
   .movie-poster {
     width: 100%;
+    height: 100%;
+    object-fit: cover;
     border-radius: 8px;
+    display: block;
+  }
+  
+  .poster-placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #2a2a2a;
+    border-radius: 8px;
+    
+    .placeholder-content {
+      text-align: center;
+      color: #888;
+      
+      i {
+        font-size: 3rem;
+        margin-bottom: 10px;
+        display: block;
+      }
+      
+      span {
+        font-size: 0.9rem;
+        display: block;
+        padding: 0 10px;
+        line-height: 1.2;
+        word-break: break-word;
+      }
+    }
   }
 }
 
@@ -75,14 +135,34 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 15px;
+  padding: 0 15px;
 
   .movie-card {
     background-color: transparent;
     border: none;
     padding: 0;
+    margin-top: 0;
 
-    .movie-poster {
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    .poster-container {
+      width: 150px;
+      height: 225px;
+      margin: 0 auto;
+      
+      .movie-poster {
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+      }
+      
+      .poster-placeholder {
+        .placeholder-content {
+          i {
+            font-size: 2rem;
+          }
+          
+          span {
+            font-size: 0.8rem;
+          }
+        }
+      }
     }
   }
 }
@@ -232,6 +312,12 @@
     .category-header h2 {
       font-size: 1.5rem;
     }
+    
+    .mobile-category-title {
+      h3 {
+        font-size: 1.3rem;
+      }
+    }
   }
 
   .movies-grid {
@@ -240,6 +326,14 @@
 }
 
 @media (max-width: 480px) {
+  .movie-category {
+    .mobile-category-title {
+      h3 {
+        font-size: 1.2rem;
+      }
+    }
+  }
+  
   .movies-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
