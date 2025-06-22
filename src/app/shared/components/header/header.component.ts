@@ -15,7 +15,9 @@ import { SearchStateService } from '../../../core/services/search-state.service'
 })
 export class HeaderComponent implements AfterViewInit {
   @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('profileContainer') profileContainer!: ElementRef;
   public isScrolled = false;
+  public isProfileMenuOpen = false;
 
   constructor(
     private movieService: MovieService,
@@ -70,5 +72,16 @@ export class HeaderComponent implements AfterViewInit {
   @HostListener('window:scroll', [])
   onWindowScroll() {
     this.isScrolled = window.scrollY > 10;
+  }
+
+  toggleProfileMenu() {
+    this.isProfileMenuOpen = !this.isProfileMenuOpen;
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    if (this.profileContainer && !this.profileContainer.nativeElement.contains(event.target)) {
+      this.isProfileMenuOpen = false;
+    }
   }
 } 

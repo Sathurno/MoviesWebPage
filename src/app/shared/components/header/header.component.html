@@ -17,8 +17,14 @@
         <button *ngIf="searchInput.value" class="clear-button" (click)="clearSearch()">&#x2715;</button>
         <i class="fas fa-search search-icon"></i>
       </div>
-      <div class="profile-container">
-        <button class="circle-button"></button>
+      <div class="profile-container" #profileContainer>
+        <button class="circle-button" (click)="toggleProfileMenu()"></button>
+        <div class="profile-menu" *ngIf="isProfileMenuOpen">
+          <a href="assets/docs/Sebastian-Vega-Tafur-CV.pdf" download="Sebastian-Vega-Tafur-CV.pdf">
+            <i class="fas fa-download"></i>
+            <span>Descargar CV</span>
+          </a>
+        </div>
       </div>
     </div>
   </div>
