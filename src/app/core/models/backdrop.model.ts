@@ -21,7 +21,7 @@ export interface Backdrop {
       vote_count: backdropData.vote_count,
       width: backdropData.width,
       getBackdropUrl: function () {
-        return `${environment.imageBaseUrl}/${environment.imageSize.original}${this.file_path}`;
+        return `${environment.imageBaseUrl}/${environment.imageSize.w1280}${this.file_path}`;
       },
     };
   }

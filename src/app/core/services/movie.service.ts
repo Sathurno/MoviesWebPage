@@ -28,7 +28,7 @@ export class MovieService {
     return {
       id: item.id,
       link: `/movie/${item.id}`,
-      imgSrc: item.poster_path ? `${environment.imageBaseUrl}/${environment.imageSize.w370}${item.poster_path}` : null,
+      imgSrc: item.poster_path ? `${environment.imageBaseUrl}/${environment.imageSize.w500}${item.poster_path}` : null,
       title: item.title,
       rating: item.vote_average * 10,
       vote: item.vote_average,
@@ -358,7 +358,7 @@ export class MovieService {
     return this.apiService.getMoviesBackdrop(movieId).pipe(
       map((backdrops: any[]) =>
         backdrops.map((image: any) => 
-          `${environment.imageBaseUrl}/${environment.imageSize.original}${image.file_path}`
+          `${environment.imageBaseUrl}/${environment.imageSize.w1280}${image.file_path}`
         )
       ),
       catchError(error => throwError(() => new Error('Error fetching movie wallpapers'))),
